@@ -1,0 +1,54 @@
+[TOC]
+
+
+# 定位 Java 消耗 CPU 最多的线程
+1、找出该Java程序的**进程id**
+2、通过top -Hp <pid>来看这个进程里所有线程的cpu消耗情况
+> $ top -Hp 18207
+top - 19:11:43 up 573 days,  2:43,  2 users,  load average: 3.03, 3.03, 3.02
+Tasks:  44 total,   1 running,  43 sleeping,   0 stopped,   0 zombie
+Cpu(s): 18.8%us,  0.0%sy,  0.0%ni, 81.1%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Mem:  99191752k total, 98683576k used,   508176k free,   128248k buffers
+Swap:  1999864k total,   191064k used,  1808800k free, 17413760k cached
+PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+18250 admin     20   0 26.1g  28m  10m R 99.9  0.0   0:19.50 java Test
+18207 admin     20   0 26.1g  28m  10m S  0.0  0.0   0:00.00 java Test
+18208 admin     20   0 26.1g  28m  10m S  0.0  0.0   0:00.09 java Test
+18209 admin     20   0 26.1g  28m  10m S  0.0  0.0   0:00.00 java Test
+18210 admin     20   0 26.1g  28m  10m S  0.0  0.0   0:00.00 java Test
+18211 admin     20   0 26.1g  28m  10m S  0.0  0.0   0:00.00 java Test
+
+可以看到cpu最高的线程是pid为18250的线程，占了99.8%
+
+3、可以通过jstack \<pid>的输出来看各个线程栈
+jstack 18207
+
+2016-03-30 19:12:23
+Full thread dump OpenJDK 64-Bit Server VM (25.66-b60 mixed mode):
+"Attach Listener" #30 daemon prio=9 os_prio=0 tid=0x00007fb90be13000 nid=0x47d7 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+"DestroyJavaVM" #29 prio=5 os_prio=0 tid=0x00007fb96245b800 nid=0x4720 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+"Busiest Thread" #28 prio=5 os_prio=0 tid=0x00007fb91498d000 nid=0x474a runnable [0x00007fb9065fe000]
+   java.lang.Thread.State: RUNNABLE
+    at Test$2.run(Test.java:18)
+"Thread-9" #27 prio=5 os_prio=0 tid=0x00007fb91498c800 nid=0x4749 waiting on condition [0x00007fb906bfe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+    at java.lang.Thread.sleep(Native Method)
+    at Test$1.run(Test.java:9)
+"Thread-8" #26 prio=5 os_prio=0 tid=0x00007fb91498b800 nid=0x4748 waiting on condition [0x00007fb906ffe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+    at java.lang.Thread.sleep(Native Method)
+    at Test$1.run(Test.java:9)
+"Thread-7" #25 prio=5 os_prio=0 tid=0x00007fb91498b000 nid=0x4747 waiting on condition [0x00007fb9073fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+    at java.lang.Thread.sleep(Native Method)
+    at Test$1.run(Test.java:9)
+"Thread-6" #24 prio=5 os_prio=0 tid=0x00007fb91498a000 nid=0x4746 waiting on condition [0x00007fb9077fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+    at java.lang.Thread.sleep(Native Method)
+    at Test$1.run(Test.java:9)
+...
+
+
+上面的线程栈我们注意到**nid**的值其实就是**线程ID**，它是`十六进制`的，我们将消耗cpu最高的线程18250，转成十六进制0X47A，然后从上面的线程栈里找到nid=0X47A的线程，看他的堆栈信息

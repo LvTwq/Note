@@ -1,0 +1,24 @@
+CREATE TABLE A ( a1 INT UNIQUE, a2 VARCHAR ( 9 ), a3 INT )
+
+EXPLAIN SELECT A.* from A;
+
+EXPLAIN SELECT A.* from A WHERE A.a1 =1;
+
+EXPLAIN SELECT A.* from A WHERE -A.a1 = -1;
+
+EXPLAIN SELECT A.a1 from A WHERE A.a1 =1;
+
+EXPLAIN SELECT A.a1 from A WHERE A.a3 =1;
+
+EXPLAIN SELECT A.a1 from A WHERE A.a1 = 1 and A.a3 = 1;
+
+EXPLAIN SELECT A.a1 from A WHERE A.a1 + A.a3 = 2;
+
+EXPLAIN SELECT A.a1 from A WHERE A.a1 < 1+2;
+
+
+CREATE TABLE B ( b1 INT UNIQUE, b2 VARCHAR ( 9 ), c2 INT )
+
+EXPLAIN select A.*, B.* FROM A JOIN B ON (a1=b1) and A.a1=1;
+-- 上下这俩 总代价一样
+EXPLAIN select A.*, B.* FROM A JOIN B ON (a1=b1) where A.a1=1;
