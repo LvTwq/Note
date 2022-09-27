@@ -1,6 +1,17 @@
 [TOC]
 
 # 简单介绍
+## Docker 和虚拟机的区别
+![](..\images\docker-y-0.jpg)
+
+## 为什么要使用 Docker
+* 简化配置
+  容器镜像打包完成后，它就是个独立的个体了，丢到哪里都能跑，而无需针对各个平台去独立配置
+* 提高开发效率
+  可以快速搭建开发环境、让开发环境贴近生产线
+* 隔离应用
+  在一台服务器上运行多个不同的应用
+
 
 ## 镜像（Image）
 * Docker 镜像是一种特殊的文件系统，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含一些为运行时准备的一些配置参数（如匿名卷、环境变量、用户等）
@@ -18,14 +29,6 @@
 * 通过<仓库名>:<标签>的格式来指定具体是这个软件哪个版本的镜像。如果不给出标签，将以 latest 作为默认标签
 
 需要注意的是，在仓库服务器上执行 docker images 命令，查看的是它本地的镜像，而不是仓库里的镜像
-
-## 为什么要使用 Docker
-* 简化配置
-  容器镜像打包完成后，它就是个独立的个体了，丢到哪里都能跑，而无需针对各个平台去独立配置
-* 提高开发效率
-  可以快速搭建开发环境、让开发环境贴近生产线
-* 隔离应用
-  在一台服务器上运行多个不同的应用
 
 # 安装 docker
 Docker CE 即社区免费版，Docker EE 即企业版，强调安全，但需付费使用
@@ -94,8 +97,8 @@ CMD java ${JAVA_OPTIONS} -jar huaweiyun-1.0.0.jar
 # 最后一个 . 表示当前路径，会将当前路径下的文件发给docker引擎
 docker build -t 镜像名称:镜像标签 .
 
-# 创建容器并运行dockerfile中的cmd命令，-v 绑定一个卷
-docker run -v /home/enlink/:/home/enlink/ -p 宿主机端口:容器端口 -d 镜像名称:镜像标签
+# 创建容器并运行dockerfile中的cmd命令，-v 绑定一个卷：宿主机路径:容器路径
+docker run -v /home/ensbrain/:/home/spring/ -p 宿主机端口:容器端口 -d 镜像名称:镜像标签
 
 # 启动已经被停止的容器
 docker start CONTAINER 
@@ -133,6 +136,10 @@ docker import *.tar 名称:tag
 
 # 替换镜像中的jar包，然后需要重启
 docker cp ensbrain-plus-server-admin-2.1.0.jar server-admin:/app.jar
+
+# 取出 镜像中的jar
+docker exec server-admin ls
+docker cp server-admin:/app.jar /root
 
 # 登录到docker镜像仓库
 
@@ -174,10 +181,21 @@ docker push 192.168.0.127:5000/enucp/connector-admin-starter:1.0.0.001-SNAPSHOT
 
 # 进入容器内部执行命令
 docker exec -it mariadb bash
+docker exec -it java程序 /bin/sh
 
 # 获取容器/镜像的元数据
-docker inspect NAME|ID NAME|ID
+docker inspect NAME|ID
+# 查看某个容器内部程序的pid
+docker inspect -f {{.State.Pid}} <container>
 
+# 查看运行状态
+docker stats
+
+# 查看某个容器正在运行的进程，pid：Java程序的进程id，ppid：容器的进程id
+docker top <container>
+
+# 根据进程pid查看该进程所属容器
+docker ps -q | xargs docker inspect --format '{{.State.Pid}}, {{.Name}}' | grep pid
 
 ```
 

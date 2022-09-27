@@ -5,11 +5,17 @@
 # 一、打包
 
 ### 1、命令行：
-
-mvn clean package -DskipTests -Pwar：打包成 jar/war
+```sh
+# -P 打包成 jar/war
+mvn clean package -DskipTests -Pwar
+```
 
 jar 包里 BOOT-INF->classes->  查看
 
+
+```sh
+mvn dependency:resolve -Dclassifier=sources
+```
 
 
 ### 2、IDEA：

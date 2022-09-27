@@ -56,14 +56,14 @@ https://blog.csdn.net/monarch91/article/details/122763156
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: server-admin
+  name: 
   labels:
-    app: server-admin
+    app: 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: server-admin
+      app: 
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -73,29 +73,25 @@ spec:
   template:
     metadata:
       labels:
-        app: server-admin
+        app: 
     spec:
         # 指定运行node为主节点
       nodeName: ecs-9e43
       hostAliases:
-        - ip: "192.168.0.127"
+        - ip: 
           hostnames:
-            - "mysql.enlink.top"
-            - "rabbitmq.enlink.top"
-            - "elasticsearch.enlink.top"
-            - "kafka.enlink.top"
-            - "redis.enlink.top"
+            - 
       imagePullSecrets: #指定访问仓库使用的密码
         - name: registry-secret-name
       containers:
-        - name: server-admin
-          image: 192.168.0.127:5000/ensbrain/server-admin:2.1.0-016
+        - name: 
+          image: 
           # 提权
           securityContext:
             privileged: true          
           volumeMounts:
-            - mountPath: /home/spring/
-              name: ensbrain-volumes
+            - mountPath: 
+              name: 
           imagePullPolicy: Always
           ports:
           # pod 内部容器的端口，targetPort 映射到 containerPort
@@ -105,19 +101,19 @@ spec:
               value: 'prod'
             - name: JAVA_OPTS
       volumes:
-        - name: ensbrain-volumes
+        - name: 
           hostPath:
-            path: /home/ensbrain/
+            path: 
             type: DirectoryOrCreate
 ---
 #---user center 对外暴露的service------#
 apiVersion: v1
 kind: Service
 metadata:
-  name: server-admin
+  name: 
 spec:
   selector:
-    app: server-admin
+    app: 
     # 暴露服务的方式：NodePort、LoadBalane、Ingress
   type: NodePort
   ports:

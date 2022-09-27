@@ -14,6 +14,9 @@ cat /proc/cpuinfo | grep 'physical id' | sort | uniq | wc -l
 # 查看逻辑 CPU 核数
 cat /proc/cpuinfo |grep "processor"|wc -l
 
+# 查看磁盘大小
+fdisk -l
+
 ```
 
 
@@ -107,6 +110,7 @@ LISTEN     0      128       ::ffff:172.23.28.106:9093                    :::*   
 ip addr
 
 tcpdump -i eth0 -nn -s0 -v port 80
+tcpdump -i any host 
 ```
 
 * -i : 选择要捕获的接口，通常是以太网卡或无线网卡，也可以是 vlan 或其他特殊接口。如果该系统上只有一个网络接口，则无需指定。 
@@ -114,11 +118,47 @@ tcpdump -i eth0 -nn -s0 -v port 80
 * -s0 : tcpdump 默认只会截取前 96 字节的内容，要想截取所有的报文内容，可以使用 -s number， number 就是你要截取的报文字节数，如果是 0 的话，表示截取报文全部内容。 
 * -v : 使用 -v，-vv 和 -vvv 来显示更多的详细信息，通常会显示更多与特定协议相关的信息。 
 * port 80 : 这是一个常见的端口过滤器，表示仅抓取 80 端口上的流量，通常是 HTTP。
+* host : 特定ip
+  * src host : 特定来源ip
+  * dst host : 特定目标ip
 
+可以调一个接口，然后抓这个接口使用的端口
+
+
+## 添加虚拟网卡
+```sh
+ip tuntap add dev tundns1 mod tun
+ip addr add 127.0.0.3/24 dev tundns1
+ifconfig tundns1 up
+```
 
 ## iptables
 ```sh
+# 查看已有规则
+iptables -nvL
+
+iptables -L INPUT -vn
+
+
+# 开放443端口
 iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
+# 对源ip开放 53 udp
+iptables -A INPUT -s 源ip -p udp -m state --state NEW -m udp --dport 53 -j ACCEPT
+
+# 删除规则
+iptables -D INPUT -s 源ip -p udp -m udp --dport 53 -j ACCEPT
+
+# 对源ip禁用 53 tcp
+iptables -I INPUT -s 源ip -p tcp --dport 53 -j DROP
+# 对某ip放开
+iptables -t filter -I INPUT -s 192.168.101.182  -j ACCEPT
+```
+
+
+## nslookup
+```shell
+# 用某DNS查询域名信息
+nslookup 域名 dns服务器
 ```
 
 
@@ -150,7 +190,7 @@ lsof：查看文件的进程信息（list open files）
 |--|--|--|
 |+d 目录|列出目录下被打开的文件|lsof +d /root|
 |-i 条件|列出符合条件的进程||
-|-p 进程id|列出指定进程号所打开的文件||
+|-p 进程id|列出指定进程号所打开的文件|lsof -p pid|
 
 
 
@@ -203,7 +243,12 @@ top -Hp <pid>
 [root@localhost share]# yum install unzip
 [root@localhost share]# vim test.war
 ```
-
+* wc [参数] 文件
+统计文件的行数、单词数
+-w	统计单词数
+-c	统计字节数
+-l	统计行数
+-m	统计字符数
 
 
 # 文件
