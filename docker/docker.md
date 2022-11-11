@@ -149,7 +149,7 @@ docker cp server-admin:/app.jar /root
 ## docker compose
 ```shell
 #创建并启动
-docker-compose –f docker-compose.yml up –d
+docker-compose –f docker-compose.yml up –d [container_name]
 #启动
 docker-compose –f docker-compose.yml start
 #停止
@@ -221,3 +221,6 @@ docker run -d -P \
     }
 ]
 ```
+
+
+# 网络隔离和通信

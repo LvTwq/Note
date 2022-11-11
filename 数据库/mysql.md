@@ -5,6 +5,8 @@
 # 登录
 mysql -u root -p
 
+# 查看权限
+show grants for [用户名];
 
 # 授权
 grant all privileges on *.* to '用户名'@'%' identified by '密码' with grant option;

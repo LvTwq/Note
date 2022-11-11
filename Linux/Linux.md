@@ -152,6 +152,9 @@ iptables -D INPUT -s 源ip -p udp -m udp --dport 53 -j ACCEPT
 iptables -I INPUT -s 源ip -p tcp --dport 53 -j DROP
 # 对某ip放开
 iptables -t filter -I INPUT -s 192.168.101.182  -j ACCEPT
+
+# 保存规则
+service iptables save
 ```
 
 
@@ -312,4 +315,17 @@ mount: /dev/sr0 写保护，将以只读方式挂载
 [root@localhost share]# zip test.zip
 [root@localhost share]# yum install unzip
 [root@localhost share]# unzip test.zip test/
+```
+
+## 权限
+![](..\images\file-permissions-rwx.jpg)
+-R : 对目前目录下的所有文件与子目录进行相同的权限变更(即以递归的方式逐个变更)
+
+![](..\images\八进制语法.png)
+```shell
+# 仅读权限
+chmod -R 444 /etc/resolv.conf
+
+# 读写权限
+chmod -R 644 /etc/resolv.conf
 ```

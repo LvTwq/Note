@@ -88,8 +88,12 @@ cd /usr/local/bin/
 redis-server /etc/redis.conf
 // 通过客户端连接redis 
 ps -ef|grep redis 
-// 看到 redis-server 127.0.0.1:6379
-redis-cli
+// 看到 redis-server 127.0.0.1:port
+
+
+redis-cli -p [port] -a [password]
+// 也可以这样输入密码
+auth [password]
 
 //　关闭
 shutdown
