@@ -17,6 +17,21 @@ cat /proc/cpuinfo |grep "processor"|wc -l
 # 查看磁盘大小
 fdisk -l
 
+# 查看当前用户的计划任务服务
+crontab -l 
+
+# 列出所有系统服务
+chkconfig –list 
+
+# 列出所有启动的系统服务程序
+chkconfig –list | grep on 
+
+# 查看所有安装的软件包
+rpm -qa 
+
+# 列出加载的内核模块
+lsmod 
+
 ```
 
 
@@ -64,6 +79,7 @@ echo -e
 ```shell
 [root@localhost ~]# yum install net-tools
 [root@localhost /]# ifconfig
+# eth0 是本地网卡，lo是
 ```
 
 * ip
@@ -78,6 +94,10 @@ echo -e
 service network restart
 ```
 
+## 查看路由表
+```sh
+route -n
+```
 
 
 ## 防火墙
@@ -87,6 +107,12 @@ service network restart
 systemctl stop firewalld.service
 #查看防火墙状态
 systemctl status firewalld
+#开放指定端口 
+firewall-cmd --zone=public --add-port=18080/tcp --permanent
+#重新载入开放端口 
+firewall-cmd --reload
+#移除指定端口 
+firewall-cmd --permanent --remove-port=3306/tcp
 ```
 
 ## curl
@@ -97,10 +123,16 @@ curl -H 'Content-Type: text/xml; charset=utf-8' -d '<soapenv:Envelope xmlns:soap
 
 ## 如何查看应用占用的端口
 可以是 pid、端口号
-> [root@172-23-28-106 jsxzfy]# ss -tnlp |grep 498
+```sh
+[root@172-23-28-106 jsxzfy]# ss -tnlp |grep 498
 LISTEN     0      50          :::8090                    :::*                   users:(("java",pid=498,fd=30))
 LISTEN     0      128       ::ffff:172.23.28.106:9093                    :::*                   users:(("java",pid=498,fd=7))
+```
 
+## 查看网络统计信息进程
+```sh
+netstat -s
+```
 
 
 
@@ -111,6 +143,9 @@ ip addr
 
 tcpdump -i eth0 -nn -s0 -v port 80
 tcpdump -i any host 
+tcpdump -i any -nn -s0 -v host 1.1.0.9
+
+tcpdump -i any port 8400 -w upload.cap
 ```
 
 * -i : 选择要捕获的接口，通常是以太网卡或无线网卡，也可以是 vlan 或其他特殊接口。如果该系统上只有一个网络接口，则无需指定。 
@@ -136,12 +171,13 @@ ifconfig tundns1 up
 ```sh
 # 查看已有规则
 iptables -nvL
-
 iptables -L INPUT -vn
 
 
 # 开放443端口
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
 iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
+
 # 对源ip开放 53 udp
 iptables -A INPUT -s 源ip -p udp -m state --state NEW -m udp --dport 53 -j ACCEPT
 
@@ -185,6 +221,9 @@ nslookup 域名 dns服务器
 [root@172-23-28-106 jsxzfy]# lsof -i tcp:8090
 COMMAND PID USER   FD   TYPE  DEVICE SIZE/OFF NODE NAME
 java    498 root   30u  IPv6 8203452      0t0  TCP *:8090 (LISTEN)
+
+// 查看已删除，空间却没有释放的进程
+lsof -n |grep deleted
 ```
 
 lsof：查看文件的进程信息（list open files）
@@ -232,11 +271,16 @@ top -Hp <pid>
 按内存使用率排序：shift+m
 
 
+## 查看某个进程的父进程
+```sh
+cat /proc/pid/status
+```
+
 
 
 # 文本
 
-* vim
+## vim
 
 ```shell
 [root@localhost share]# yum install vim
@@ -246,12 +290,87 @@ top -Hp <pid>
 [root@localhost share]# yum install unzip
 [root@localhost share]# vim test.war
 ```
-* wc [参数] 文件
+## wc 
+wc [参数] 文件
 统计文件的行数、单词数
 -w	统计单词数
 -c	统计字节数
 -l	统计行数
 -m	统计字符数
+
+## awk
+常用参数：
+-F	指定输入时用到的字段分隔符
+-v	自定义变量
+-f	从脚本中读取awk命令
+-m	对val值设置内在限制
+
+内建变量：
+`NR`: NR表示从awk开始执行后，按照记录分隔符读取的数据次数，默认的记录分隔符为换行符，因此默认的就是读取的数据行数，NR可以理解为Number of Record的缩写。
+
+`FNR`: 在awk处理多个输入文件的时候，在处理完第一个文件后，NR并不会从1开始，而是继续累加，因此就出现了FNR，每当处理一个新文件的时候，FNR就从1开始计数，FNR可以理解为File Number of Record。
+
+`NF`: NF表示目前的记录被分割的字段的数目，NF可以理解为Number of Field。
+
+
+
+仅显示指定文件中第1、2**列**的内容（默认以空格为间隔符）
+```sh
+[root@linuxcool ~]# awk ' {print $1,$2} ' anaconda-ks.cfg
+#version=RHEL8 
+ignoredisk --only-use=sda
+autopart --type=lvm
+# Partition
+clearpart --none
+```
+
+以冒号为间隔符，仅显示指定文件中第1列的内容：
+```sh
+[root@linuxcool ~]# awk -F : '{print $1}' /etc/passwd
+root
+bin
+daemon
+adm
+lp
+sync
+shutdown
+```
+
+以冒号为间隔符，显示系统中所有UID号码大于500的用户信息（第3列）：
+```sh
+[root@linuxcool ~]# awk -F : '$3>=500' /etc/passwd
+nobody:x:65534:65534:Kernel Overflow User:/:/sbin/nologin
+systemd-coredump:x:999:997:systemd Core Dumper:/:/sbin/nologin
+polkitd:x:998:996:User for polkitd:/:/sbin/nologin
+geoclue:x:997:995:User for geoclue:/var/lib/geoclue:/sbin/nologin
+```
+
+仅显示指定文件中含有指定关键词root的内容：
+```sh
+awk '/root/{print}' /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+operator:x:11:0:operator:/root:/sbin/nologin
+```
+
+以冒号为间隔符，仅显示指定文件中最后一个字段的内容：
+```sh
+awk -F: '{print $NF}' /etc/passwd
+```
+
+
+## sed
+```sh
+sed -n '/root/p' xxx.log #显示包含root的行
+
+sed -i 's/root/world/g' xxx.log # 用world 替换xxx.log文件中的root; s==search  查找并替换, g==global  全部替换, -i: implace
+
+sed -i -e '1i happy' -e '$a new year' xxx.log #【真实写入文件】在文件第一行添加happy,文件结尾添加new year
+
+
+sed -i '/it is a test/d' myfile # 删除这行
+
+
+```
 
 
 # 文件
@@ -315,9 +434,18 @@ mount: /dev/sr0 写保护，将以只读方式挂载
 [root@localhost share]# zip test.zip
 [root@localhost share]# yum install unzip
 [root@localhost share]# unzip test.zip test/
+
+zip -r backup1.zip /etc
 ```
 
 ## 权限
+```sh
+#查看Linux文件的权限
+ls -l 文件名
+#查看linux文件夹的权限
+ls -ld 文件夹名称
+```
+
 ![](..\images\file-permissions-rwx.jpg)
 -R : 对目前目录下的所有文件与子目录进行相同的权限变更(即以递归的方式逐个变更)
 
@@ -328,4 +456,73 @@ chmod -R 444 /etc/resolv.conf
 
 # 读写权限
 chmod -R 644 /etc/resolv.conf
+```
+
+
+# 磁盘和内存
+## 查看内存使用
+```sh
+free -h
+```
+
+## 查看各分区使用
+```sh
+# 此命令可用于显示已挂载文件系统的磁盘使用情况
+df -h
+# 查看文件系统的inode使用情况
+df -i
+```
+
+## 查看指定目录的大小
+```sh
+du -sh
+```
+
+## 查看硬盘大小
+```sh
+# 查看磁盘的分区布局和详细信息
+fdisk -l |grep Disk
+```
+
+## 列出系统上的块设备（包括磁盘和分区）
+它会显示每个设备的名称、大小和挂载点等信息
+```sh
+lsblk
+```
+
+## 查看磁盘压力
+```sh
+# 每秒输出一次I/O统计信息
+iostat -x 1
+
+yum install iotop
+
+```
+
+
+# 用户/用户组
+```sh
+# 查看活动用户
+w
+
+# 查看指定用户信息
+id
+
+# 查看用户登录日志
+last
+
+# 查看系统所有用户
+cut -d: -f1 /etc/passwd
+
+# 查看系统所有组
+
+```
+
+# 定时任务
+```sh
+# 打开定时任务编辑器
+crontab -e
+
+# 添加
+10 15 * * * sh test.sh
 ```

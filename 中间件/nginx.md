@@ -76,6 +76,20 @@ location /proxy/ {
 }
 ```
 
+## 文件下载限速
+在里面的location上添加如下代码
+```sh
+limit_rate_after 512k;
+limit_rate 10k;
+```
+
+## 设置请求头
+* proxy_set_header
+假如Nginx**请求上游服务器**时，添加额外的请求头，就需要使用proxy_set_header
+* add_header
+Nginx**响应数据时**，要告诉浏览器一些头信息，就要使用add_header。例如跨域访问
+
+
 ## http 块
 七层协议
 
@@ -101,6 +115,7 @@ nginx 用来做请求的转发、反向代理，负载均衡
 
 
 # 反向代理
+![](..\images\nginx1.png)
 
 首先把 server 块中的 server_name 修改为该系统的IP地址，listen 改为要监听的端口
 
@@ -128,7 +143,7 @@ ssl_certificate_key
 # 通过 url 访问服务器目录
 ```shell
 location /clientlog {
-        alias /home/enlink/clientlog;
+        alias /home/xxxxx/clientlog;
         autoindex on;  # 开启目录文件列表
         autoindex_exact_size on;  # 显示出文件的确切大小，单位是bytes
         autoindex_localtime on;  # 显示的文件时间为文件的服务器时间

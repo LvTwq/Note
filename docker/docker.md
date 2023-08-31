@@ -79,16 +79,15 @@ docker info
 
 ```shell
 # 引用需要的基础镜像
-FROM lwieske/java-8:latest
+FROM openjdk:11
 
-ARG TZ=Asia/Shanghai
+RUN echo "Asia/Shanghai" > /etc/timezone
 
 ARG JAR_FILE=./*.jar
 ENV JAVA_OPTIONS=-Xmx512m
-COPY ${JAR_FILE} huaweiyun-1.0.0.jar
+COPY ${JAR_FILE} /app.jar
 
-# 运行容器时执行
-CMD java ${JAVA_OPTIONS} -jar huaweiyun-1.0.0.jar
+CMD java ${JAVA_OPTIONS} -jar /app.jar
 ```
 
 ## 构建镜像
@@ -97,8 +96,8 @@ CMD java ${JAVA_OPTIONS} -jar huaweiyun-1.0.0.jar
 # 最后一个 . 表示当前路径，会将当前路径下的文件发给docker引擎
 docker build -t 镜像名称:镜像标签 .
 
-# 创建容器并运行dockerfile中的cmd命令，-v 绑定一个卷：宿主机路径:容器路径
-docker run -v /home/ensbrain/:/home/spring/ -p 宿主机端口:容器端口 -d 镜像名称:镜像标签
+# 创建容器并运行dockerfile中的cmd命令，-v 绑定一个卷：宿主机路径:容器路径，指定网络模式为host
+docker run -d --network host -v /home/ensbrain/:/home/spring/ -p 宿主机端口:容器端口 --restart=always -d 镜像名称:镜像标签
 
 # 启动已经被停止的容器
 docker start CONTAINER 
@@ -109,6 +108,8 @@ docker stop CONTAINER
 # 重启容器
 docker restart CONTAINER
 
+# 删除容器
+docker rm CONTAINER
 
 # 杀掉容器
 docker kill -s KILL 7a6f979bc630
@@ -142,6 +143,11 @@ docker exec server-admin ls
 docker cp server-admin:/app.jar /root
 
 # 登录到docker镜像仓库
+docker login <仓库地址>
+#1.打标签
+docker tag myimage registry.example.com:5000/myimage
+#2.推送
+docker push registry.example.com:5000/myimage
 
 
 ```
@@ -149,18 +155,18 @@ docker cp server-admin:/app.jar /root
 ## docker compose
 ```shell
 #创建并启动
-docker-compose –f docker-compose.yml up –d [container_name]
+docker-compose -f docker-compose.yml up -d [container_name]
 #启动
-docker-compose –f docker-compose.yml start
+docker-compose -f docker-compose.yml start
 #停止
-docker-compose –f docker-compose.yml stop
+docker-compose -f docker-compose.yml stop
 #删除
-docker-compose –f docker-compose.yml down
-docker-compose –f docker-compose.yml down --volumes
+docker-compose -f docker-compose.yml down
+docker-compose -f docker-compose.yml down --volumes
 #重启
-docker-compose –f docker-compose.yml restart
+docker-compose -f docker-compose.yml restart
 #指定重启某一个或多个
-docker-compose –f docker-compose.yml restart mynginx
+docker-compose -f docker-compose.yml restart mynginx
 
 ```
 
@@ -173,7 +179,7 @@ docker-compose –f docker-compose.yml restart mynginx
 docker logs -f CONTAINER
 
 # 标记本地镜像，将其归入仓库
-docker tag docker.s.enlink.top/enucp/connector-admin-starter:1.0.0.001-SNAPSHOT 192.168.0.127:5000/enucp/connector-admin-starter:1.0.0.001-SNAPSHOT
+docker tag docker.s.xxxxx.top/enucp/connector-admin-starter:1.0.0.001-SNAPSHOT 192.168.0.127:5000/enucp/connector-admin-starter:1.0.0.001-SNAPSHOT
 
 # 推镜像，不指定仓库，默认推给官方仓库
 docker push 192.168.0.127:5000/enucp/connector-admin-starter:1.0.0.001-SNAPSHOT 

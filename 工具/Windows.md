@@ -13,3 +13,6 @@ taskkill /im imagename -f
 3、强制杀死PID为processid的进程，PID可通过tasklist查看
 
 taskkill /pid processid -f
+
+4、刷新DNS
+ipconfig /flushdns

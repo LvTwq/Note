@@ -99,6 +99,36 @@ auth [password]
 shutdown
 ```
 
+
+docker 版本
+```sh
+docker pull redis:latest
+```
+```yml
+version: "3.5"
+
+services:
+  ## ======================= Redis(v6.2.4) =========================
+  redis:
+    image: redis:latest
+    network_mode: host
+    command:
+      [ "redis-server", "/data/conf/redis.conf" ]
+    restart: always
+    container_name: redis
+    hostname: redis.lmc.top
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./data:/data
+    healthcheck:
+      test: ["CMD-SHELL","redis-cli -a [password] -p [port] ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 6
+      start_period: 40s
+
+```
+
 ## 1、基础知识
 
 默认16个数据库，从0开始，默认使用0号库，所有库密码相同
@@ -111,12 +141,17 @@ select [index]
 
 
 ### 1）单线程+多路IO复用
+Redis 是单线程，主要是指 Redis 的网络 IO 和键值对读写是由一个线程来完成的，这也是 Redis 对外提供键值存储服务的主要流程。但 Redis 的其他功能，比如持久化、异步删除、集群数据同步等，其实是由额外的线程执行的。
 
-![](.\images\redis9.png)
+![](..\images\redis9.png)
+但是，在这里的网络 IO 操作中，有潜在的阻塞点，分别是 accept() 和 recv()。当 Redis 监听到一个客户端有连接请求，但一直未能成功建立起连接时，会阻塞在 accept() 函数这里，导致其他客户端无法和 Redis 建立连接。类似的，当 Redis 通过 recv() 从一个客户端读取数据时，如果数据一直没有到达，Redis 也会一直阻塞在 recv()。
+
+这就导致 Redis 整个线程阻塞，无法处理其他客户端请求，效率很低。不过，幸运的是，socket 网络模型本身支持非阻塞模式。
+
 
 # 三、五大数据类型
 
-![](.\images\redis10.png)
+![](..\images\redis10.png)
 
 ## 1、String
 
@@ -178,7 +213,7 @@ incrby 和 decrby 都是原子性操作
 
 ### 3）数据结构
 
-![](.\images\redis13.png)
+![](..\images\redis13.png)
 
 ![](..\images\redis14.png)
 
@@ -254,6 +289,17 @@ incrby 和 decrby 都是原子性操作
 
 ## 6、新数据类型-Bitmaps
 
+
+
+## 7、Streams
+
+专门用来为消息队列设计的数据类型：
+* XADD：插入消息，保证有序，可以自动生成全局唯一 ID
+* XRED：读取消息，可以按 ID 读取
+* XREADGROUP：按消费组形式读取消息
+* XPENDING 和 XACK：XPENDING 用来查询每个组内所有消费者已读取但未确认的消息，XACK 用于向消息队列确认消息处理已完成。
+
+![](..\images\redis83.png)
 
 
 # 四、配置文件
@@ -395,7 +441,9 @@ vim /etc/redis.conf
 
 save：只管保存，其他不管，全部阻塞。手动保存。不建议
 
-bgsave：Redis 会在后台异步进行快照操作，快照同时还可以响应客户端请求
+bgsave：Redis 会在后台异步进行快照操作，快照同时还可以响应客户端请求，Redis 就会借助操作系统提供的写时复制技术（Copy-On-Write, COW），在执行快照的同时，正常处理写操作。
+
+简单来说，bgsave 子进程是由主线程 fork 生成的，可以共享主线程的所有内存数据。bgsave 子进程运行后，开始读取主线程的内存数据，并把它们写入 RDB 文件。
 
 ![](..\images\redis52.png)
 
@@ -403,7 +451,9 @@ bgsave：Redis 会在后台异步进行快照操作，快照同时还可以响�
 
 ### Append Only File
 
-**以日志的形式来记录每个写操作（增量保存）**，将redis执行过的所有写指令记录下来**（读操作不记录），只许追加文件但不可以改写文件**，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就可以根据日志文件的内容将写指令从前到后执行一次完成数据恢复的工作。
+**以日志的形式来记录每个写操作（增量保存）**，将redis执行过的所有写指令记录下来 **（读操作不记录），只许追加文件但不可以改写文件**，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就可以根据日志文件的内容将写指令从前到后执行一次完成数据恢复的工作。
+
+写后日志这种方式，就是先让系统执行命令，只有命令能执行成功，才会被记录到日志中，否则，系统就会直接向客户端报错。所以，Redis 使用写后日志这一方式的一大好处是，可以避免出现记录错误命令的情况。
 
 ![](..\images\redis54.png)
 

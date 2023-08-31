@@ -2,7 +2,7 @@
 
 
 
-# **一、**Spring Boot 入门
+# 一、Spring Boot 入门
 
 ## 1、Spring Boot 简介
 
@@ -59,11 +59,11 @@
 
 整合maven进来；
 
-![idea设置](F:\Note\images\搜狗截图20180129151045.png)
+![idea设置](..\images\搜狗截图20180129151045.png)
 
 
 
-![images/](F:\Note\images\搜狗截图20180129151112.png)
+![images/](..\images\搜狗截图20180129151112.png)
 
 ## 4、Spring Boot HelloWorld
 
@@ -270,7 +270,7 @@ public @interface EnableAutoConfiguration {
 
 ​		将所有需要导入的组件以全类名的方式返回；这些组件就会被添加到容器中；
 
-​		会给容器中导入非常多的自动配置类（xxxAutoConfiguration）；就是给容器中导入这个场景需要的所有组件，并配置好这些组件；		![自动配置类](F:\Note\images\搜狗截图20180129224104.png)
+​		会给容器中导入非常多的自动配置类（xxxAutoConfiguration）；就是给容器中导入这个场景需要的所有组件，并配置好这些组件；		![自动配置类](..\images\搜狗截图20180129224104.png)
 
 有了自动配置类，免去了我们手动编写配置注入功能组件等的工作；
 
@@ -294,11 +294,11 @@ J2EE的整体整合解决方案和自动配置都在spring-boot-autoconfigure-2.
 
 ### 1、IDEA：使用 Spring Initializer快速创建项目
 
-![avatar](F:\Note\images\快速创建spring boot 1.png) 
+![avatar](..\images\快速创建spring boot 1.png) 
 
-![avatar](F:\Note\images\快速创建spring boot 2.png)
+![avatar](..\images\快速创建spring boot 2.png)
 
-![avatar](F:\Note\images\快速创建spring boot 3.png)
+![avatar](..\images\快速创建spring boot 3.png)
 
 IDE都支持使用Spring的项目创建向导快速创建一个Spring Boot项目；
 
@@ -432,8 +432,8 @@ server:
 
 ```yaml
 friends:
-		lastName: zhangsan
-		age: 20
+    lastName: zhangsan
+    age: 20
 ```
 
 行内写法：
@@ -642,10 +642,10 @@ Spring Boot里面没有Spring的配置文件，我们自己编写的配置文件
 ```
 
 SpringBoot推荐给容器中添加组件的方式；推荐使用全注解的方式
+ 
+1、配置类 **@Configuration** ------>Spring配置文件
 
-1、配置类**@Configuration**------>Spring配置文件
-
-2、使用**@Bean**给容器中添加组件
+2、使用 **@Bean** 给容器中添加组件
 
 ```java
 /**
@@ -836,46 +836,48 @@ java -jar spring-boot-02-config-02-0.0.1-SNAPSHOT.jar --server.port=8087  --serv
 
 **2）、@EnableAutoConfiguration 作用：**
 
- -  利用EnableAutoConfigurationImportSelector给容器中导入一些组件？
+-  利用EnableAutoConfigurationImportSelector给容器中导入一些组件？
 
 - 可以查看selectImports()方法的内容；
 
 - List\<String> configurations = getCandidateConfigurations(annotationMetadata,  attributes);获取候选的配置
 
-  - ```java
+```java
     SpringFactoriesLoader.loadFactoryNames()
-    扫描所有jar包类路径下  META-INF/spring.factories
+    /*扫描所有jar包类路径下  META-INF/spring.factories
     把扫描到的这些文件的内容包装成properties对象
-    从properties中获取到EnableAutoConfiguration.class类（类名）对应的值，然后把他们添加在容器中
-    ```
-```
-    
+    从properties中获取到EnableAutoConfiguration.class类（类名）对应的值，然后把他们添加在容器中*/
+```  
 
 
-**将 类路径下  META-INF/spring.factories 里面配置的所有EnableAutoConfiguration的值加入到了容器中；**
 
-​```properties
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
-org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
-org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,\
-org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration,\
-org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration,\
-org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration,\
-org.springframework.boot.autoconfigure.cloud.CloudAutoConfiguration,\
-org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration,\
-org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration,\
-org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration,\
-org.springframework.boot.autoconfigure.couchbase.CouchbaseAutoConfiguration,\
-org.springframework.boot.autoconfigure.dao.PersistenceExceptionTranslationAutoConfiguration,\
-```
+- 将 类路径下  META-INF/spring.factories 里面配置的所有EnableAutoConfiguration的值加入到了容器中
+
+
+
+ Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=
+org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,
+org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,
+org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,
+org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration,
+org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration,
+org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration,
+org.springframework.boot.autoconfigure.cloud.CloudAutoConfiguration,
+org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration,
+org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration,
+org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration,
+org.springframework.boot.autoconfigure.couchbase.CouchbaseAutoConfiguration,
+org.springframework.boot.autoconfigure.dao.PersistenceExceptionTranslationAutoConfiguration,
+
+
 
 每一个这样的  xxxAutoConfiguration类都是容器中的一个组件，都加入到容器中；用他们来做自动配置；
 
 3）、每一个自动配置类进行自动配置功能；
 
-4）、以**HttpEncodingAutoConfiguration（Http编码自动配置）**为例解释自动配置原理；
+4）、以 **HttpEncodingAutoConfiguration（Http编码自动配置）** 为例解释自动配置原理；
+
 
 ```java
 @Configuration   //表示这是一个配置类，以前编写的配置文件一样，也可以给容器中添加组件
@@ -1073,7 +1075,7 @@ public class HelloWorld {
 
 图示；
 
-![](F:\Note\images\concrete-bindings.png)
+![](..\images\concrete-bindings.png)
 
 每一个日志的实现框架都有自己的配置文件。使用slf4j以后，**配置文件还是做成日志实现框架自己本身的配置文件；**
 
@@ -1083,7 +1085,7 @@ a（slf4j+logback）: Spring（commons-logging）、Hibernate（jboss-logging）
 
 统一日志记录，即使是别的框架和我一起统一使用slf4j进行输出？
 
-![](F:\Note\images\legacy.png)
+![](..\images\legacy.png)
 
 **如何让系统中所有的日志都统一到slf4j；**
 
@@ -1117,7 +1119,7 @@ SpringBoot使用它来做日志功能；
 
 底层依赖关系
 
-![](F:\Note\images\搜狗截图20180131220946.png)
+![](..\images\搜狗截图20180131220946.png)
 
 总结：
 
@@ -1136,7 +1138,7 @@ public abstract class LogFactory {
     static LogFactory logFactory = new SLF4JLogFactory();
 ```
 
-![](F:\Note\images\搜狗截图20180131221411.png)
+![](..\images\搜狗截图20180131221411.png)
 
 
 
@@ -1444,7 +1446,7 @@ public class ResourceProperties implements ResourceLoaderAware {
 
 http://www.webjars.org/
 
-![](F:\Note\images\搜狗截图20180203181751.png)
+![](..\images\搜狗截图20180203181751.png)
 
 http://localhost:8080/webjars/jquery/3.4.1/jquery.js
 
@@ -1483,7 +1485,7 @@ localhost:8080/abc ===  去静态资源文件夹里面找abc
 
 JSP、Velocity、Freemarker、Thymeleaf
 
-![](F:\Note\images\template-engine.png)
+![](..\images\template-engine.png)
 
 
 
@@ -1496,12 +1498,12 @@ SpringBoot推荐的Thymeleaf；
 ### 1、引入thymeleaf；
 
 ```xml
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-thymeleaf</artifactId>
-          	2.1.6
-		</dependency>
-切换thymeleaf版本
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        2.1.6
+    </dependency>
+<!-- 切换thymeleaf版本 -->
 <properties>
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
 		<!-- 布局功能的支持程序  thymeleaf3主程序  layout2以上版本 -->
@@ -1561,7 +1563,7 @@ public class ThymeleafProperties {
 
 ​	th：任意html属性；来替换原生属性的值
 
-![](F:\Note\images\2018-02-04_123955.png)
+![](..\images\2018-02-04_123955.png)
 
 
 
@@ -1645,7 +1647,7 @@ Special tokens:
 
 https://docs.spring.io/spring-boot/docs/1.5.10.RELEASE/reference/htmlsingle/#boot-features-developing-web-applications
 
-### 1. Spring MVC auto-configuration
+### 1、Spring MVC auto-configuration
 
 Spring Boot 自动配置好了SpringMVC
 
@@ -2032,7 +2034,7 @@ public class MyLocaleResolver implements LocaleResolver {
 
 ```
 
-### 3）、登陆
+### 3）、登录
 
 开发期间模板引擎页面修改以后，要实时生效
 
@@ -2047,7 +2049,7 @@ spring.thymeleaf.cache=false
 
 
 
-登陆错误消息的显示
+登录错误消息的显示
 
 ```html
 <p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
@@ -2055,14 +2057,14 @@ spring.thymeleaf.cache=false
 
 
 
-### 4）、拦截器进行登陆检查
+### 4）、拦截器进行登录检查
 
 拦截器
 
 ```java
 
 /**
- * 登陆检查，
+ * 登录检查，
  */
 public class LoginHandlerInterceptor implements HandlerInterceptor {
     //目标方法执行之前
@@ -2070,12 +2072,12 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Object user = request.getSession().getAttribute("loginUser");
         if(user == null){
-            //未登陆，返回登陆页面
-            request.setAttribute("msg","没有权限请先登陆");
+            //未登录，返回登录页面
+            request.setAttribute("msg","没有权限请先登录");
             request.getRequestDispatcher("/index.html").forward(request,response);
             return false;
         }else{
-            //已登陆，放行请求
+            //已登录，放行请求
             return true;
         }
 
@@ -2503,9 +2505,9 @@ protected ModelAndView resolveErrorView(HttpServletRequest request,
 
 ### 2）、如果定制错误响应：
 
-#### 	**1）、如何定制错误的页面；**
+#### 如何定制错误的页面
 
-​			**1）、有模板引擎的情况下；error/状态码;** 【将错误页面命名为  错误状态码.html 放在模板引擎文件夹里面的 error文件夹下】，发生此状态码的错误就会来到  对应的页面；
+**1）、有模板引擎的情况下；error/状态码;** 【将错误页面命名为  错误状态码.html 放在模板引擎文件夹里面的 error文件夹下】，发生此状态码的错误就会来到  对应的页面；
 
 ​			我们可以使用4xx和5xx作为错误页面的文件名来匹配这种类型的所有错误，精确优先（优先寻找精确的状态码.html）；		
 
@@ -2529,7 +2531,7 @@ protected ModelAndView resolveErrorView(HttpServletRequest request,
 
 
 
-#### 	2）、如何定制错误的json数据；
+#### 如何定制错误的json数据
 
 ​		1）、自定义异常处理&返回定制json数据；
 
@@ -2570,7 +2572,7 @@ public class MyExceptionHandler {
     }
 ```
 
-#### 	3）、将我们的定制数据携带出去；
+#### 将我们的定制数据携带出去
 
 出现错误以后，会来到/error请求，会被BasicErrorController处理，响应出去可以获取的数据是由getErrorAttributes得到的（是AbstractErrorController（ErrorController）规定的方法）；
 
@@ -3261,7 +3263,7 @@ docker容器(Container)：镜像启动后的实例称为一个容器；容器是
 
 ​	2）、导入虚拟机文件centos7-atguigu.ova；
 
-​	3）、双击启动linux虚拟机;使用  root/ 123456登陆
+​	3）、双击启动linux虚拟机;使用  root/ 123456登录
 
 ​	4）、使用客户端连接linux服务器进行命令操作；
 
@@ -3569,6 +3571,7 @@ public class DruidConfig {
 
 ## 3、整合MyBatis
 
+
 ```xml
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
@@ -3577,7 +3580,7 @@ public class DruidConfig {
 		</dependency>
 ```
 
-![](F:\Note\images\搜狗截图20180305194443.png)
+![](..\images\搜狗截图20180305194443.png)
 
 步骤：
 
@@ -3587,7 +3590,7 @@ public class DruidConfig {
 
 ​	3）、创建JavaBean
 
-### 	4）、注解版
+### 注解版
 
 ```java
 //指定这是一个操作数据库的mapper
@@ -3707,7 +3710,7 @@ http://www.mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/
 
 ### 1）、SpringData简介
 
-![](F:\Note\images\搜狗截图20180306105412.png)
+![](..\images\搜狗截图20180306105412.png)
 
 ### 2）、整合SpringData JPA
 
@@ -3821,9 +3824,10 @@ private void initialize(Object[] sources) {
 }
 ```
 
-![](F:\Note\images\搜狗截图20180306145727.png)
+![](..\images\搜狗截图20180306145727.png)
 
-![](F:\Note\images\搜狗截图20180306145855.png)
+![](..\images\搜狗截图20180306145855.png)
+
 
 ## 2、运行run方法
 
@@ -3981,6 +3985,109 @@ public class HelloCommandLineRunner implements CommandLineRunner {
     }
 }
 ```
+
+## 4、为什么springboot的jar可以直接运行？
+### 通过插件打包
+```xml
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+```
+此jar包与一般的java项目jar有所不同，此jar包可以直接通过‘java -jar xxxx.jar’命令直接运行并部署
+
+### 原理
+在Spring Boot项目的jar中会生成一个MANIFEST.MF文件（路径：META-INF\MANIFEST.MF），打开该文件你会看到有一个MainClass的映射，其对应的值是一个类，就是执行‘java -jar’命令后正式执行的类，mainclass类是springboot插件引入后自动添加的
+![](..\images\springboot1.png)
+
+看JarLauncher类的源码需要手动引入‘spring-boot-loader’依赖
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-loader</artifactId>
+</dependency>
+```
+
+打开之后可以看到此类有一个主程序入口，main方法
+![](..\images\springboot2.png)
+
+```java
+protected void launch(String[] args) throws Exception {
+   JarFile.registerUrlProtocolHandler();
+   //自定义类加载器加载jar文件
+   ClassLoader classLoader = createClassLoader(getClassPathArchives());
+   //关注getMainClass方法
+   launch(args, getMainClass(), classLoader);
+}
+
+/**
+ * mainClass参数就是前面getMainClass从MANIFEST.MF文件中获取到的Start-Class
+ */
+protected void launch(String[] args, String mainClass, ClassLoader classLoader) throws Exception {
+   Thread.currentThread().setContextClassLoader(classLoader);
+   createMainMethodRunner(mainClass, args, classLoader).run(); //注意此处run方法调用！！
+}
+
+```
+
+此处我们先去看下getMainClass方法，关键点在于getMainClass()方法，获取META-INF\MANIFEST.MF文件键为‘Start-Class’的值（类），并进行调用
+ExecutableArchiveLauncher实现:
+```java
+@Override
+protected String getMainClass() throws Exception {
+   Manifest manifest = this.archive.getManifest();
+   String mainClass = null;
+   if (manifest != null) {
+      mainClass = manifest.getMainAttributes().getValue("Start-Class");
+   }
+   if (mainClass == null) {
+      throw new IllegalStateException("No 'Start-Class' manifest entry specified in " + this);
+   }
+   return mainClass;
+}
+
+```
+MANIFEST.MF文件中的Start-Class：
+![](..\images\springboot3.png)
+
+
+```java
+protected MainMethodRunner createMainMethodRunner(String mainClass, String[] args, ClassLoader classLoader) {
+   return new MainMethodRunner(mainClass, args);
+}
+```
+最后是new了一个MainMethodRunner类，并在码四中调用run方法，而在run方法中可以看到是通过反射去执行Start-Class对于类的main方法，开始执行业务逻辑
+
+```java
+public class MainMethodRunner {
+
+   private final String mainClassName;
+
+   private final String[] args;
+
+   /**
+    * Create a new {@link MainMethodRunner} instance.
+    * @param mainClass the main class
+    * @param args incoming arguments
+    */
+   public MainMethodRunner(String mainClass, String[] args) {
+      this.mainClassName = mainClass;
+      this.args = (args != null) ? args.clone() : null;
+   }
+
+   public void run() throws Exception {
+      Class<?> mainClass = Thread.currentThread().getContextClassLoader().loadClass(this.mainClassName);
+      Method mainMethod = mainClass.getDeclaredMethod("main", String[].class);
+      mainMethod.invoke(null, new Object[] { this.args });
+   }
+
+}
+```
+
 
 
 
