@@ -165,3 +165,11 @@ GC Roots 包括（入口大约有三个：线程、静态变量和 JNI 引用）
 
 大部分对象的生命周期都很短
 其他对象则很可能会存活很长时间
+
+
+# 四、VirtualMachineError
+## OutOfMemoryError
+是一种内存溢出错误，通常发生在 Java 堆内存不足以分配新对象时
+
+## StackOverflowError
+是一种堆栈溢出错误，通常发生在递归方法或无限循环中，导致方法调用的堆栈深度超出了 JVM 的限制

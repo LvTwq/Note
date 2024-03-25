@@ -159,6 +159,18 @@ kubectl get pod -o wide
 
 # 查看服务详细信息，服务名称，类型，集群ip，端口，时间等信息
 kubectl get  svc
+
+# 进入pod
+kubectl exec -it server-download-6765ff6bc7-qq67v bash -n sase
+
+# 把pod内文件拷贝出来
+kubectl cp sase/server-download-6765ff6bc7-qq67v:/home/spring/fileCenter/fileCenter.db /root/lmc/fileCenter.db
+
+# 查看日志
+kubectl logs -f --tail=222 server-download-6765ff6bc7-76cvt -n sase
+
+# 重启
+kubectl delete server-download-6765ff6bc7-qq67v -n sase
 ```
 
 

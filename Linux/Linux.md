@@ -120,6 +120,24 @@ firewall-cmd --permanent --remove-port=3306/tcp
 curl -H 'Content-Type: text/xml; charset=utf-8' -d '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.fgw.bm.com/"><soapenv:Header /><soapenv:Body><ser:qryMPSqlByKey><ser:key>f964a5718b3b400aaf54d0baecbca609</ser:key><ser:inParams>updateTime=2021-10-27</ser:inParams></ser:qryMPSqlByKey></soapenv:Body></soapenv:Envelope>' http://2.208.64.254:8090/channel/gG2foEk5lz/services/FgwServices?wsdl
 ```
 
+### 如何查看接口耗时
+向 curl-format.txt 写入以下内容：
+    time_namelookup:  %{time_namelookup}\n
+       time_connect:  %{time_connect}\n
+    time_appconnect:  %{time_appconnect}\n
+      time_redirect:  %{time_redirect}\n
+   time_pretransfer:  %{time_pretransfer}\n
+ time_starttransfer:  %{time_starttransfer}\n
+                    ----------\n
+         time_total:  %{time_total}\n
+
+```shell
+curl -w "@curl-format.txt" -o /dev/null -s -L "http://cizixs.com"
+
+# 简单写法
+curl -w "Total time: %{time_total}\n" http://cizixs.com
+```
+
 
 ## 如何查看应用占用的端口
 可以是 pid、端口号
@@ -132,6 +150,10 @@ LISTEN     0      128       ::ffff:172.23.28.106:9093                    :::*   
 ## 查看网络统计信息进程
 ```sh
 netstat -s
+
+netstat -antp | grep 6378
+
+netstat -antp | grep 6378 | wc -l
 ```
 
 
@@ -146,6 +168,8 @@ tcpdump -i any host
 tcpdump -i any -nn -s0 -v host 1.1.0.9
 
 tcpdump -i any port 8400 -w upload.cap
+
+tcpdump -nni any port 53 -w aaa.pcap
 ```
 
 * -i : 选择要捕获的接口，通常是以太网卡或无线网卡，也可以是 vlan 或其他特殊接口。如果该系统上只有一个网络接口，则无需指定。 
@@ -187,7 +211,9 @@ iptables -D INPUT -s 源ip -p udp -m udp --dport 53 -j ACCEPT
 # 对源ip禁用 53 tcp
 iptables -I INPUT -s 源ip -p tcp --dport 53 -j DROP
 # 对某ip放开
-iptables -t filter -I INPUT -s 192.168.101.182  -j ACCEPT
+iptables -t filter -I INPUT -s 192.168.72.118  -j ACCEPT
+
+iptables -D INPUT -s 192.168.72.118 -j ACCEPT
 
 # 保存规则
 service iptables save
@@ -471,7 +497,11 @@ free -h
 df -h
 # 查看文件系统的inode使用情况
 df -i
+
+
+find /home -type f -size +100M
 ```
+
 
 ## 查看指定目录的大小
 ```sh

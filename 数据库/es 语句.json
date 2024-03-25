@@ -1,0 +1,241 @@
+POST /test-agg-cars/_search
+
+{
+    "size": 5,
+    "aggs": {
+        "popular_colors": {
+            "terms": {
+                "field": "color.keyword"
+            }
+        }
+    }
+}
+
+
+
+
+POST /test-agg-cars/_search
+
+{
+    "aggregations": {
+        "popular_colors": {
+            "terms": {
+                "field": "color"
+            }
+        }
+    }
+}
+
+
+
+
+GET /test-agg-cars/_search
+
+{
+    "size": 0,
+    "aggs": {
+        "popular_colors": {
+            "terms": {
+                "field": "color"
+            }
+        },
+        "make_by": {
+            "terms": {
+                "field": "make"
+            }
+        }
+    }
+}
+
+
+
+
+POST /test-agg-cars/_search
+
+{
+    "size": 0,
+    "aggs": {
+        "colors": {
+            "terms": {
+                "field": "color"
+            },
+            "aggs": {
+                "avg_price": {
+                    "avg": {
+                        "field": "price"
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+POST /test-agg-cars/_search
+
+{
+    "size": 0,
+    "aggs": {
+        "popular_colors": {
+            "terms": {
+                "field": "color",
+                "size": 99,
+                "min_doc_count": 1,
+                "shard_min_doc_count": 0,
+                "show_term_doc_count_error": false,
+                "order": [
+                    {
+                        "_count": "desc"
+                    },
+                    {
+                        "_key": "asc"
+                    }
+                ]
+            },
+            "aggs": {
+                "avg_price": {
+                    "avg": {
+                        "field": "price"
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+GET /test-agg-cars/_search
+{
+    "runtime_mappings": {
+        "make.length": {
+            "type": "long",
+            "script": "emit(doc
+            [
+                'make'
+            ]
+            .value.length())"
+        }
+    },
+    "size": 0,
+    "aggs": {
+        "make_length": {
+            "histogram": {
+                "interval": 1,
+                "field": "make.length"
+            }
+        }
+    }
+}
+
+
+GET /test-agg-cars/_search
+
+{
+    "size": 5,
+    "aggs": {
+        "make_by": {
+            "filter": {
+                "term": {
+                    "make": "honda"
+                }
+            },
+            "aggs": {
+                "avg_price": {
+                    "avg": {
+                        "field": "price"
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+GET /test-agg-logs/_search
+
+{
+    "size": 0,
+    "aggs": {
+        "messages": {
+            "filters": {
+                "other_bucket_key": "other_messages",
+                "filters": {
+                    "infos": {
+                        "match": {
+                            "body": "info"
+                        }
+                    },
+                    "warnings": {
+                        "match": {
+                            "body": "warning"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+GET /test-agg-logs/_search
+
+{
+    "query": {
+        "match": {
+            "body": "info:    hello pdai"
+        }
+    }
+}
+
+
+
+
+put /test-agg-logs/_doc/4
+
+{
+    "body": "warning:   page could not be rendered"
+}
+
+
+
+
+PUT /test-agg-logs
+
+{
+    "mappings": {
+        "properties": {
+            "body": {
+                "type": "text"
+            }
+        }
+    }
+}
+
+
+
+
+PUT /test-agg-logs
+
+{
+    "settings": {
+        "number_of_shards": 5,
+        "number_of_replicas": 1
+    },
+    "mappings": {
+        "mappings": {
+            "properties": {
+                "body": {
+                    "type": "text"
+                }
+            }
+        }
+    }
+}

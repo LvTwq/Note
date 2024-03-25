@@ -9,8 +9,13 @@ mysql -u root -p
 show grants for [用户名];
 
 # 授权
-grant all privileges on *.* to '用户名'@'%' identified by '密码' with grant option;
+grant all privileges on *.* to 'user'@'%' identified by 'password' with grant option;
 
+flush privileges;
+
+
+set global time_zone='+08:00';
+set time_zone='+08:00';
 flush privileges;
 
 # 查看schema
@@ -46,4 +51,11 @@ show master status\G
 查看MySQL中的InnoDB锁定信息。该视图提供了有关当前正在使用的锁定资源和锁定的事务的详细信息。
 ```sql
 select * from information_schema.INNODB_LOCKS;
+
+-- 监控
+show processlist;
+
+-- 慢查询是否开启
+SHOW VARIABLES LIKE 'slow_query_log';
 ```
+

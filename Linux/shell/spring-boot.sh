@@ -1,5 +1,6 @@
-SpringBoot=$2
+#!/bin/bash
 
+SpringBoot=$2
 
 if [ "$1" = "" ];
 then
@@ -18,8 +19,8 @@ function start()
 	if [ $count != 0 ];then
 		echo "$SpringBoot is running..."
 	else
-		echo "Start $SpringBoot"
-		nohup java -jar $SpringBoot --spring.profiles.active=prod > colorful.log 2>&1 &
+		echo "Start $SpringBoot success..."
+		nohup java -Xdebug -Xnoagent -Djava.compiler=NONE -jar $SpringBoot > /dev/null 2>&1 &
 	fi
 }
 
