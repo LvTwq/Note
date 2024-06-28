@@ -486,7 +486,7 @@ public String findNameById(long id);
 
 数据表 students 中字段 id，name，cid（外键关联 classes 表的id字段）
 
-![](F:\Note\images\TIM截图20200302170606.png)
+![](..\images\TIM截图20200302170606.png)
 
 ##### 2）实体类和接口
 
@@ -595,7 +595,7 @@ public interface StudentRepository {
 
 #### 1.2 查询 classes 表，及联 students 表
 
-![](F:\Note\images\TIM截图20200302183005.png)
+![](..\images\TIM截图20200302183005.png)
 
 ```java
 package com.iteima.jdbc.repository;
@@ -658,7 +658,7 @@ Student(id=3, name=王五, classes=null)
 
 数据表 customer_goods 中字段 id，cid（外键关联 customer 表的id字段），gid（外键关联 goods 表的id字段）
 
-![](F:\Note\images\TIM截图20200303104724.png)
+![](..\images\TIM截图20200303104724.png)
 
 ##### 2）实体类和接口
 
@@ -941,15 +941,15 @@ public Student findByIdLazy(long id);
 
 这个 cid 是 StudentRepository 中的 findByIdLazy() 方法的结果集中的 cid，运行最后会执行两次 SQL
 
-![](F:\Note\images\TIM截图20200303151936.png)
+![](..\images\TIM截图20200303151936.png)
 
 不开启延迟加载：
 
-![](F:\Note\images\TIM截图20200303152611.png)
+![](..\images\TIM截图20200303152611.png)
 
 开启后：
 
-![](F:\Note\images\TIM截图20200303152903.png)
+![](..\images\TIM截图20200303152903.png)
 
 
 
@@ -991,7 +991,7 @@ public class test4 {
 
 这时执行了一次SQL语句，已有缓存，再加两行代码
 
-![](F:\Note\images\TIM截图20200303160341.png)
+![](..\images\TIM截图20200303160341.png)
 
 输出两行结果，但只执行了一次 SQL
 
@@ -1045,7 +1045,7 @@ public class Account implements Serializable {
 
 * 关闭一级缓存，查看二级缓存：
 
-![](F:\Note\images\TIM截图20200303161758.png)
+![](..\images\TIM截图20200303161758.png)
 
 
 
@@ -1141,11 +1141,11 @@ public Account findByAccount(Account account);
     </select>
 ```
 
-![](F:\Note\images\TIM截图20200303164244.png)
+![](..\images\TIM截图20200303164244.png)
 
 此时四个条件都是满足的，所以能查出来，但如果有一个条件不满足，就查不出来了
 
-![](F:\Note\images\TIM截图20200303164410.png)
+![](..\images\TIM截图20200303164410.png)
 
 因为 **and** 是***与关系***
 
@@ -1176,7 +1176,7 @@ if 标签可以⾃动根据表达式的结果来决定是否将对应的语句�
 
 此时password=null，就可以不加这个条件，但还是查询成功：
 
-![](F:\Note\images\TIM截图20200303165235.png)
+![](..\images\TIM截图20200303165235.png)
 
 
 
@@ -1204,7 +1204,7 @@ where 标签可以⾃动判断是否要删除语句块中的 and 关键字，如
     </select>
 ```
 
-![](F:\Note\images\TIM截图20200303170432.png)
+![](..\images\TIM截图20200303170432.png)
 
 
 
@@ -1286,7 +1286,7 @@ set 标签⽤于 update 操作，会⾃动根据参数选择⽣成 SQL 语句。
     </update>
 ```
 
-![](F:\Note\images\TIM截图20200303173352.png)
+![](..\images\TIM截图20200303173352.png)
 
 
 

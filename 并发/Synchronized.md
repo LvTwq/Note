@@ -91,7 +91,7 @@ public class SynchronizedObjectCodeBlock2 implements Runnable {
 
 **补充**：利用IDEA查看线程状态
 
-![](F:\Note\images\查看线程状态.png)
+![](..\images\查看线程状态.png)
 
 
 

@@ -98,25 +98,25 @@ Git 版本库有一个称为 **Stage 的暂存区**以及最后的 **History 版
 
 使用指针将每个提交连接成一条时间线，HEAD 指针指向当前分支指针
 
-![](\images\使用指针将分支连接.png)
+![](..\images\使用指针将分支连接.png)
 
 
 
 新建分支是**新建一个指针(Dev)**指向时间线的最后一个结点，并让 HEAD 指针指向新分支，表示新分支称为当前分支。
 
-![](\images\新建分支.png)
+![](..\images\新建分支.png)
 
 
 
 每次提交只会让当前分支指针向前移动，而其它分支不会移动。
 
-![](.\images\提交.png)
+![](..\images\提交.png)
 
 
 
 合并分支也只需改变指针即可。
 
-![](images\合并.png)
+![](..\images\合并.png)
 
 
 
@@ -126,11 +126,11 @@ Git 版本库有一个称为 **Stage 的暂存区**以及最后的 **History 版
 
 当两个分支都对同一个文件的同一行进行了修改，在分支合并时就会产生冲突。
 
-![](\images\冲突.png)
+![](..\images\冲突.png)
 
 * 冲突的表现：
 
-![](\images\冲突的表现.png)
+![](..\images\冲突的表现.png)
 
 ### 解决冲突：
 
@@ -158,7 +158,7 @@ Git 版本库有一个称为 **Stage 的暂存区**以及最后的 **History 版
 $ git merge --no-ff -m "merge with no-ff" dev
 ```
 
-![](\images\Fast forward.png)
+![](..\images\Fast forward.png)
 
 
 
@@ -206,7 +206,7 @@ $ ssh-keygen -t rsa -C "youremail@example.com"
 
 Gitflow 工作流通过为功能开发，发布准备和维护设备设立了独立的分支，让发布迭代过程更流畅。严格的分支模型也为大型项目提供了一些非常必要的结构。
 
-![](\images\GitFlow工作流.png)
+![](..\images\GitFlow工作流.png)
 
 ### 分支种类
 

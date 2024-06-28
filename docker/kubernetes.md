@@ -17,7 +17,7 @@
   容器类似于 VM，但容器之间可以共享操作系统，因此更轻量。每个容器具有自己的文件系统、CPU、内存、进程空间
 
 # 架构
-![](..\images\k8s架构图1.jpg)
+![](..\images\k8s架构图1.png)
 一个K8S系统，通常称为一个K8S集群（Cluster）
 
 这个集群主要包括两个部分：
@@ -27,7 +27,6 @@
 
 ## Master 节点
 ![](..\images\k8s架构图2.jpg)
-
 API Server是整个系统的对外接口，供客户端和其它组件调用，相当于“营业厅”
 Scheduler负责对集群内部的资源进行调度，相当于“调度室”
 Controller manager负责管理控制器，相当于“大总管”
@@ -161,7 +160,7 @@ kubectl get pod -o wide
 kubectl get  svc
 
 # 进入pod
-kubectl exec -it server-download-6765ff6bc7-qq67v bash -n sase
+kubectl exec -it server-download-6765ff6bc7-qq67v -- sh -n sase
 
 # 把pod内文件拷贝出来
 kubectl cp sase/server-download-6765ff6bc7-qq67v:/home/spring/fileCenter/fileCenter.db /root/lmc/fileCenter.db

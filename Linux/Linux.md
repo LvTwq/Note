@@ -505,7 +505,12 @@ find /home -type f -size +100M
 
 ## 查看指定目录的大小
 ```sh
-du -sh
+du -sh /*
+
+yum install epel-release
+yum provides ncdu
+yum -y install ncdu
+ncdu -x /
 ```
 
 ## 查看硬盘大小

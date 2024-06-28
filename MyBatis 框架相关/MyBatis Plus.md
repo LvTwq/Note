@@ -173,7 +173,7 @@ public class User {
 
 查看编译结果
 
-![img](F:\Note\images\TIM截图20200210200757.png)
+![img](..\images\TIM截图20200210200757.png)
 
 Lombok使用参考：
 
@@ -294,7 +294,7 @@ SELECT id,name,age,email FROM user
 
 **注意：**数据库插入id值默认为：全局唯一id
 
-![](F:\Note\images\image-20200210172753232.png)
+![](..\images\image-20200210172753232.png)
 
 
 
@@ -302,7 +302,7 @@ SELECT id,name,age,email FROM user
 
 数据库做分库分表操作时，若使用自动增长（AUTO_INCREMENT），需要在最后一张表中得到最后一条记录的id，在id基础之上+1，这样就比较麻烦。
 
-![](F:\Note\images\TIM截图20200210173559.png)
+![](..\images\TIM截图20200210173559.png)
 
 **补充：**
 
@@ -489,7 +489,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
 
 ### 2.3 乐观锁
 
-![](F:\Note\images\TIM截图20200210174148.png)
+![](..\images\TIM截图20200210174148.png)
 
 **主要适用场景：**当要更新一条记录的时候，希望这条记录没有被别人更新，也就是说实现线程安全的数据更新
 
@@ -948,7 +948,7 @@ performanceInterceptor.setMaxTime(5); //ms，超过此处设置的ms不执行
 
 条件构造器
 
-![](F:\Note\images\27b56b5e-39a6-42ba-b7ed-4f109b6ad7bf.png)
+![](..\images\27b56b5e-39a6-42ba-b7ed-4f109b6ad7bf.png)
 
 Wrapper ： 条件构造抽象类，最顶端父类
 *  AbstractWrapper ： 用于查询条件封装，生成 sql 的 where 条件

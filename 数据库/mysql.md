@@ -1,6 +1,7 @@
-[TOC]
+[toc]
 
 # 命令
+
 ```shell
 # 登录
 mysql -u root -p
@@ -28,8 +29,8 @@ show tables like '%dns%';
 desc tablename;
 ```
 
-
 # 主从复制
+
 A：主机
 B：从机
 
@@ -46,16 +47,63 @@ start slave;
 show master status\G
 ```
 
-
 # 排错
+
+先查询进程的IO情况，如果mysql占用资源多的话，可能是mysql有慢查询或死锁
+
+```sh
+# -d选项表示展示进程的I/O情况
+$ pidstat -d 1
+```
+
 查看MySQL中的InnoDB锁定信息。该视图提供了有关当前正在使用的锁定资源和锁定的事务的详细信息。
+
 ```sql
 select * from information_schema.INNODB_LOCKS;
 
 -- 监控
-show processlist;
+show full processlist;
 
 -- 慢查询是否开启
 SHOW VARIABLES LIKE 'slow_query_log';
 ```
 
+# binlog
+
+```sql
+-- 查看binlog是否启用，以及查看日志文件位置
+mysql> show variables like '%log_bin%';
++---------------------------------+---------------------------------+
+| Variable_name                   | Value                           |
++---------------------------------+---------------------------------+
+| log_bin                         | ON                              |
+| log_bin_basename                | /var/lib/mysql/mysqld-bin       |
+| log_bin_index                   | /var/lib/mysql/mysqld-bin.index |
+| log_bin_trust_function_creators | OFF                             |
+| log_bin_use_v1_row_events       | OFF                             |
+| sql_log_bin                     | ON                              |
++---------------------------------+---------------------------------+
+
+
+-- 记录下当前日志的文件名和偏移位置，在后续查看日志过程中可以准确定位
+mysql> show master status;
++-------------------+----------+--------------+------------------+-------------------+
+| File              | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++-------------------+----------+--------------+------------------+-------------------+
+| mysqld-bin.000001 |     2425 |              |                  |                   |
++-------------------+----------+--------------+------------------+-------------------+
+
+-- 也可以通过指定起始时间来查看日志，所以也记录一下当前时间
+mysql> select now();
++---------------------+
+| now()               |
++---------------------+
+| 2018-08-02 09:59:43 |
++---------------------+
+```
+
+```sh
+mysqlbinlog --no-defaults  /var/lib/mysql/mysqld-bin.000001 --start-position=2425 > 1.sql
+```
+
+# 集群
