@@ -1,6 +1,4 @@
-[TOC]
-
-
+[toc]
 
 # 一、NoSql简介
 
@@ -59,8 +57,6 @@ session（存放用户信息）是存在服务器A中，但第二次请求可能
 
 ![](..\images\redis7.png)
 
-
-
 # 二、安装启动
 
 ```shell
@@ -99,11 +95,12 @@ auth [password]
 shutdown
 ```
 
-
 docker 版本
+
 ```sh
 docker pull redis:latest
 ```
+
 ```yml
 version: "3.5"
 
@@ -138,16 +135,14 @@ services:
 select [index]
 ```
 
-
-
 ### 1）单线程+多路IO复用
+
 Redis 是单线程，主要是指 Redis 的网络 IO 和键值对读写是由一个线程来完成的，这也是 Redis 对外提供键值存储服务的主要流程。但 Redis 的其他功能，比如持久化、异步删除、集群数据同步等，其实是由额外的线程执行的。
 
 ![](..\images\redis9.png)
 但是，在这里的网络 IO 操作中，有潜在的阻塞点，分别是 accept() 和 recv()。当 Redis 监听到一个客户端有连接请求，但一直未能成功建立起连接时，会阻塞在 accept() 函数这里，导致其他客户端无法和 Redis 建立连接。类似的，当 Redis 通过 recv() 从一个客户端读取数据时，如果数据一直没有到达，Redis 也会一直阻塞在 recv()。
 
 这就导致 Redis 整个线程阻塞，无法处理其他客户端请求，效率很低。不过，幸运的是，socket 网络模型本身支持非阻塞模式。
-
 
 # 三、五大数据类型
 
@@ -201,8 +196,6 @@ getset <key> <value>
 ttl <key>
 ```
 
-
-
 incrby 和 decrby 都是原子性操作
 
 ![](..\images\redis12.png)
@@ -216,8 +209,6 @@ incrby 和 decrby 都是原子性操作
 ![](..\images\redis13.png)
 
 ![](..\images\redis14.png)
-
-
 
 ## 2、List
 
@@ -234,8 +225,6 @@ incrby 和 decrby 都是原子性操作
 ### 3）数据结构
 
 ![](..\images\redis18.png)
-
-
 
 ## 3、Set
 
@@ -267,8 +256,6 @@ incrby 和 decrby 都是原子性操作
 
 ![](..\images\redis26.png)
 
-
-
 ## 5、Zset
 
 ### 1）简介
@@ -285,22 +272,18 @@ incrby 和 decrby 都是原子性操作
 
 ![](..\images\redis30.png)
 
-
-
 ## 6、新数据类型-Bitmaps
-
-
 
 ## 7、Streams
 
 专门用来为消息队列设计的数据类型：
+
 * XADD：插入消息，保证有序，可以自动生成全局唯一 ID
 * XRED：读取消息，可以按 ID 读取
 * XREADGROUP：按消费组形式读取消息
 * XPENDING 和 XACK：XPENDING 用来查询每个组内所有消费者已读取但未确认的消息，XACK 用于向消息队列确认消息处理已完成。
 
 ![](..\images\redis83.png)
-
 
 # 四、配置文件
 
@@ -309,8 +292,6 @@ incrby 和 decrby 都是原子性操作
 ```shell
 vim /etc/redis.conf
 ```
-
-
 
 ## 1、Units 单位
 
@@ -329,8 +310,6 @@ vim /etc/redis.conf
 ### 3）tcp-backlog
 
 ![](..\images\redis32.png)
-
-
 
 # 五、发布和订阅
 
@@ -373,8 +352,6 @@ Redis 客户端可以定义任意数量的频道
 ## 2、实例：手机验证码
 
 ![](..\images\redis37.png)
-
-
 
 # 七、事务与锁
 
@@ -501,8 +478,6 @@ bgsave：Redis 会在后台异步进行快照操作，快照同时还可以响�
 
 ![](..\images\redis57.png)
 
-
-
 ```shell
 # 启动redis
 redis-server redis63**.conf
@@ -513,8 +488,6 @@ slaveof [目标]ip port
 # 查看主从信息
 info replication
 ```
-
-
 
 如果**从服务器**挂了，重启并不会自动加入原有的主从关系，需要手动加入，然后会自动复制主服务器的所有数据
 
@@ -548,7 +521,7 @@ vim sentinel.conf
 redis-sentinel sentinel.conf
 ```
 
-![](..\images\redis60.png) 
+![](..\images\redis60.png)
 
 ![](..\images\redis62.png)
 
@@ -573,8 +546,6 @@ redis-sentinel sentinel.conf
 ## 2、优缺点
 
 ![](..\images\redis65.png)
-
-
 
 # 十一、应用问题
 
@@ -612,23 +583,47 @@ redis-sentinel sentinel.conf
 
 # 十二、分布式锁
 
-分布式中，一台机器上锁，其他机器不知道这台机器上了锁
+## set NX PX + Lua
 
-![](..\images\redis77.png)
+**加锁**： set NX PX + 重试 + 重试间隔
 
-![](..\images\redis78.png)
+向Redis发起如下命令: `SET productId:lock 0xx9p03001 NX PX 30000`
 
-释放锁：del lock
+其中，"productId"由自己定义，可以是与本次业务有关的id，"0xx9p03001"是一串随机值，必须保证全局唯一。
 
-![](..\images\redis79.png)
+“NX"指的是当且仅当key(也就是案例中的"productId:lock”)在Redis中不存在时，返回执行成功，否则执行失败。
+
+"PX 30000"指的是在30秒后，key将被自动删除。执行命令后返回成功，表明服务成功的获得了锁
 
 
+## Redlock
 
-有一条数据有3个操作：a、b、c
+在分布式系统中，网络分区可能导致某些节点失去连接，从而无法释放锁。这时可能需要使用更复杂的分布式锁算法，如 Redlock。
 
-可能造成：a释放b的锁
+Redlock 是一种由 Redis 作者提出的分布式锁算法，它旨在解决单个 Redis 实例可能出现的可靠性问题。Redlock 通过在多个独立的 Redis 实例上获取锁来确保分布式系统的安全性和可靠性。
 
-![](..\images\redis80.png)
+
+### 基本步骤
+
+#### 获取锁
+
+* 在N个 Redis 实例上尝试获取锁
+* 为每个锁设置一个相同的过期时间
+* 尝试在每个 Redis 实例上以非阻塞的方式（使用 NX 选项）获取锁
+* 如果在一半的实例（N/2+1个）上成功，则认为获取锁成功
+
+#### 验证锁有效性
+
+* 获取锁成功后，验证实际消耗时间是否小于锁过期时间，如果超过，认为锁获取失败
+
+#### 释放锁
+
+* 在所有实例上释放锁（使用 Lua 脚本保证原子性，确保只有持有锁的客户端才能释放锁）
+
+### 自动续签
+
+Redisson 的 Watchdog 是一个后台线程，它会在锁持有期间定期检查锁的状态并自动续签，以确保锁在持有期间不会过期。默认情况下，Redisson 会在锁的持有时间达到过期时间的一半时进行续签。
+
 
 # 十三、acl
 
@@ -646,4 +641,3 @@ acl setuser lucy
 # 查看当前用户
 acl whoami
 ```
-

@@ -1,6 +1,7 @@
-[TOC]
+[toc]
 
 # 系统
+
 ```shell
 # 查看内核
 uname -r
@@ -33,7 +34,6 @@ rpm -qa
 lsmod 
 
 ```
-
 
 ## 包管理
 
@@ -70,6 +70,22 @@ echo -e
 ```
 
 
+## 配置系统内核参数
+
+```bash
+# sysctl [参数] [对象]
+
+# 查看参数
+sysctl net.ipv4.ip_forward
+
+# 等同于
+cat /proc/sys/net/ipv4/ip_forward
+
+# 设置参数
+sysctl net.ipv4.ip_forwar=1
+```
+
+
 # 网络
 
 ## 查询ip
@@ -95,10 +111,10 @@ service network restart
 ```
 
 ## 查看路由表
+
 ```sh
 route -n
 ```
-
 
 ## 防火墙
 
@@ -116,11 +132,13 @@ firewall-cmd --permanent --remove-port=3306/tcp
 ```
 
 ## curl
+
 ```shell
 curl -H 'Content-Type: text/xml; charset=utf-8' -d '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.fgw.bm.com/"><soapenv:Header /><soapenv:Body><ser:qryMPSqlByKey><ser:key>f964a5718b3b400aaf54d0baecbca609</ser:key><ser:inParams>updateTime=2021-10-27</ser:inParams></ser:qryMPSqlByKey></soapenv:Body></soapenv:Envelope>' http://2.208.64.254:8090/channel/gG2foEk5lz/services/FgwServices?wsdl
 ```
 
 ### 如何查看接口耗时
+
 向 curl-format.txt 写入以下内容：
     time_namelookup:  %{time_namelookup}\n
        time_connect:  %{time_connect}\n
@@ -136,11 +154,15 @@ curl -w "@curl-format.txt" -o /dev/null -s -L "http://cizixs.com"
 
 # 简单写法
 curl -w "Total time: %{time_total}\n" http://cizixs.com
+
+# 查看调用过程，可以看到是通过ipv4/ipv6来访问的，如果v6不通，就需要禁用v6
+curl -v www.baidu.com
 ```
 
-
 ## 如何查看应用占用的端口
+
 可以是 pid、端口号
+
 ```sh
 [root@172-23-28-106 jsxzfy]# ss -tnlp |grep 498
 LISTEN     0      50          :::8090                    :::*                   users:(("java",pid=498,fd=30))
@@ -148,6 +170,7 @@ LISTEN     0      128       ::ffff:172.23.28.106:9093                    :::*   
 ```
 
 ## 查看网络统计信息进程
+
 ```sh
 netstat -s
 
@@ -156,9 +179,8 @@ netstat -antp | grep 6378
 netstat -antp | grep 6378 | wc -l
 ```
 
-
-
 ## tcpdump
+
 ```sh
 # 先查网卡
 ip addr
@@ -172,10 +194,10 @@ tcpdump -i any port 8400 -w upload.cap
 tcpdump -nni any port 53 -w aaa.pcap
 ```
 
-* -i : 选择要捕获的接口，通常是以太网卡或无线网卡，也可以是 vlan 或其他特殊接口。如果该系统上只有一个网络接口，则无需指定。 
-* -nn : 单个 n 表示不解析域名，直接显示 IP；两个 n 表示不解析域名和端口。这样不仅方便查看 IP 和端口号，而且在抓取大量数据时非常高效，因为域名解析会降低抓取速度。 
-* -s0 : tcpdump 默认只会截取前 96 字节的内容，要想截取所有的报文内容，可以使用 -s number， number 就是你要截取的报文字节数，如果是 0 的话，表示截取报文全部内容。 
-* -v : 使用 -v，-vv 和 -vvv 来显示更多的详细信息，通常会显示更多与特定协议相关的信息。 
+* -i : 选择要捕获的接口，通常是以太网卡或无线网卡，也可以是 vlan 或其他特殊接口。如果该系统上只有一个网络接口，则无需指定。
+* -nn : 单个 n 表示不解析域名，直接显示 IP；两个 n 表示不解析域名和端口。这样不仅方便查看 IP 和端口号，而且在抓取大量数据时非常高效，因为域名解析会降低抓取速度。
+* -s0 : tcpdump 默认只会截取前 96 字节的内容，要想截取所有的报文内容，可以使用 -s number， number 就是你要截取的报文字节数，如果是 0 的话，表示截取报文全部内容。
+* -v : 使用 -v，-vv 和 -vvv 来显示更多的详细信息，通常会显示更多与特定协议相关的信息。
 * port 80 : 这是一个常见的端口过滤器，表示仅抓取 80 端口上的流量，通常是 HTTP。
 * host : 特定ip
   * src host : 特定来源ip
@@ -183,8 +205,8 @@ tcpdump -nni any port 53 -w aaa.pcap
 
 可以调一个接口，然后抓这个接口使用的端口
 
-
 ## 添加虚拟网卡
+
 ```sh
 ip tuntap add dev tundns1 mod tun
 ip addr add 127.0.0.3/24 dev tundns1
@@ -192,6 +214,7 @@ ifconfig tundns1 up
 ```
 
 ## iptables
+
 ```sh
 # 查看已有规则
 iptables -nvL
@@ -219,13 +242,12 @@ iptables -D INPUT -s 192.168.72.118 -j ACCEPT
 service iptables save
 ```
 
-
 ## nslookup
+
 ```shell
 # 用某DNS查询域名信息
 nslookup 域名 dns服务器
 ```
-
 
 # 进程
 
@@ -254,26 +276,23 @@ lsof -n |grep deleted
 
 lsof：查看文件的进程信息（list open files）
 
-|参数|含义|举例|
-|--|--|--|
-|+d 目录|列出目录下被打开的文件|lsof +d /root|
-|-i 条件|列出符合条件的进程||
-|-p 进程id|列出指定进程号所打开的文件|lsof -p pid|
-
-
+| 参数      | 含义                       | 举例          |
+| --------- | -------------------------- | ------------- |
+| +d 目录   | 列出目录下被打开的文件     | lsof +d /root |
+| -i 条件   | 列出符合条件的进程         |               |
+| -p 进程id | 列出指定进程号所打开的文件 | lsof -p pid   |
 
 ## 查询某进程所在路径
+
 ```shell
 ll /proc/进程id
 ```
-
 
 每个ip都有那么多端口，无法从外部端口直接访问内部应用的，所以要做映射，
 在url上输入 ip:port（外部端口），映射成内部应用提供的端口才能访问该应用
 CONTAINER ID   IMAGE               COMMAND                  CREATED             STATUS                          PORTS                                       NAMES
 
 82b04f0e890e   isc-eureka-server   "sh -c 'java $PARAMS…"   About an hour ago   Up About an hour                0.0.0.0:9861->8761/tcp, :::9861->8761/tcp   docker-compose_isc-eureka-server_1
-
 
 ## Java 进程
 
@@ -287,22 +306,21 @@ CONTAINER ID   IMAGE               COMMAND                  CREATED             
 -v：输出jvm参数
 -V：输出通过flag文件传递到JVM中的参数
 
-
 ## top
+
 ```sh
 # 看这个进程里所有线程的cpu消耗情况
 top -Hp <pid>
 ```
+
 按CPU使用率排序：shift+p
 按内存使用率排序：shift+m
 
-
 ## 查看某个进程的父进程
+
 ```sh
 cat /proc/pid/status
 ```
-
-
 
 # 文本
 
@@ -316,7 +334,9 @@ cat /proc/pid/status
 [root@localhost share]# yum install unzip
 [root@localhost share]# vim test.war
 ```
-## wc 
+
+## wc
+
 wc [参数] 文件
 统计文件的行数、单词数
 -w	统计单词数
@@ -325,6 +345,7 @@ wc [参数] 文件
 -m	统计字符数
 
 ## awk
+
 常用参数：
 -F	指定输入时用到的字段分隔符
 -v	自定义变量
@@ -338,9 +359,8 @@ wc [参数] 文件
 
 `NF`: NF表示目前的记录被分割的字段的数目，NF可以理解为Number of Field。
 
-
-
 仅显示指定文件中第1、2**列**的内容（默认以空格为间隔符）
+
 ```sh
 [root@linuxcool ~]# awk ' {print $1,$2} ' anaconda-ks.cfg
 #version=RHEL8 
@@ -351,6 +371,7 @@ clearpart --none
 ```
 
 以冒号为间隔符，仅显示指定文件中第1列的内容：
+
 ```sh
 [root@linuxcool ~]# awk -F : '{print $1}' /etc/passwd
 root
@@ -363,6 +384,7 @@ shutdown
 ```
 
 以冒号为间隔符，显示系统中所有UID号码大于500的用户信息（第3列）：
+
 ```sh
 [root@linuxcool ~]# awk -F : '$3>=500' /etc/passwd
 nobody:x:65534:65534:Kernel Overflow User:/:/sbin/nologin
@@ -372,6 +394,7 @@ geoclue:x:997:995:User for geoclue:/var/lib/geoclue:/sbin/nologin
 ```
 
 仅显示指定文件中含有指定关键词root的内容：
+
 ```sh
 awk '/root/{print}' /etc/passwd
 root:x:0:0:root:/root:/bin/bash
@@ -379,12 +402,13 @@ operator:x:11:0:operator:/root:/sbin/nologin
 ```
 
 以冒号为间隔符，仅显示指定文件中最后一个字段的内容：
+
 ```sh
 awk -F: '{print $NF}' /etc/passwd
 ```
 
-
 ## sed
+
 ```sh
 sed -n '/root/p' xxx.log #显示包含root的行
 
@@ -398,9 +422,7 @@ sed -i '/it is a test/d' myfile # 删除这行
 
 ```
 
-
 # 文件
-
 
 ## 复制拷贝
 
@@ -410,16 +432,11 @@ cp -r dir1 dir2 # 表示将dir1及其dir1下所包含的文件复制到dir2下
 mv AAA BBB #表示将AAA改名成BBB
 ```
 
-
-
 ## 全盘搜索
 
 ```shell
 find / -name  xxxxx	# 通过文件名搜索
 ```
-
-
-
 
 ## 远程拷贝
 
@@ -428,18 +445,12 @@ find / -name  xxxxx	# 通过文件名搜索
 scp jar_ajslbl_2012/ajslbl.jar root@172.23.26.155:/home/ba/out/
 ```
 
-
-
 ## 解压缩
 
 ```shell
 [root@localhost share]# tar -xvzf arterybase-server-linux-3.6.2.tar.gz
 [root@localhost share]# tar -czvf FileName.tar test/
 ```
-
-
-
-
 
 ## 挂载
 
@@ -451,7 +462,6 @@ mount: /dev/sr0 写保护，将以只读方式挂载
 [root@localhost /]# cp -r /dvd /dvdrom/
 [root@localhost dvd]# umount /dvd
 ```
-
 
 ## 压缩
 
@@ -465,6 +475,7 @@ zip -r backup1.zip /etc
 ```
 
 ## 权限
+
 ```sh
 #查看Linux文件的权限
 ls -l 文件名
@@ -476,6 +487,7 @@ ls -ld 文件夹名称
 -R : 对目前目录下的所有文件与子目录进行相同的权限变更(即以递归的方式逐个变更)
 
 ![](..\images\八进制语法.png)
+
 ```shell
 # 仅读权限
 chmod -R 444 /etc/resolv.conf
@@ -484,14 +496,16 @@ chmod -R 444 /etc/resolv.conf
 chmod -R 644 /etc/resolv.conf
 ```
 
-
 # 磁盘和内存
+
 ## 查看内存使用
+
 ```sh
 free -h
 ```
 
 ## 查看各分区使用
+
 ```sh
 # 此命令可用于显示已挂载文件系统的磁盘使用情况
 df -h
@@ -502,8 +516,8 @@ df -i
 find /home -type f -size +100M
 ```
 
-
 ## 查看指定目录的大小
+
 ```sh
 du -sh /*
 
@@ -514,18 +528,22 @@ ncdu -x /
 ```
 
 ## 查看硬盘大小
+
 ```sh
 # 查看磁盘的分区布局和详细信息
 fdisk -l |grep Disk
 ```
 
 ## 列出系统上的块设备（包括磁盘和分区）
+
 它会显示每个设备的名称、大小和挂载点等信息
+
 ```sh
 lsblk
 ```
 
 ## 查看磁盘压力
+
 ```sh
 # 每秒输出一次I/O统计信息
 iostat -x 1
@@ -534,9 +552,9 @@ yum install iotop
 
 ```
 
-
 # 用户/用户组
-```sh
+
+```bash
 # 查看活动用户
 w
 
@@ -554,6 +572,7 @@ cut -d: -f1 /etc/passwd
 ```
 
 # 定时任务
+
 ```sh
 # 打开定时任务编辑器
 crontab -e
