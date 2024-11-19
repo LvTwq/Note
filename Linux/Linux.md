@@ -69,7 +69,6 @@ export
 echo -e 
 ```
 
-
 ## 配置系统内核参数
 
 ```bash
@@ -84,7 +83,6 @@ cat /proc/sys/net/ipv4/ip_forward
 # 设置参数
 sysctl net.ipv4.ip_forwar=1
 ```
-
 
 # 网络
 
@@ -271,7 +269,7 @@ COMMAND PID USER   FD   TYPE  DEVICE SIZE/OFF NODE NAME
 java    498 root   30u  IPv6 8203452      0t0  TCP *:8090 (LISTEN)
 
 // 查看已删除，空间却没有释放的进程
-lsof -n |grep deleted
+lsof |grep deleted
 ```
 
 lsof：查看文件的进程信息（list open files）
@@ -286,6 +284,8 @@ lsof：查看文件的进程信息（list open files）
 
 ```shell
 ll /proc/进程id
+
+ll /proc/进程id/fd/
 ```
 
 每个ip都有那么多端口，无法从外部端口直接访问内部应用的，所以要做映射，

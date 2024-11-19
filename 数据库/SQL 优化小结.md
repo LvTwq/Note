@@ -22,7 +22,6 @@ abase在查询的时候会自动做表连接。将两张表做hash join操作：
                ->  Seq Scan on y  (cost=0.00..17.00 rows=700 width=4)
 ```
 
-
 ## 2.关于not in和not exists的使用
 
 ```sql
@@ -31,15 +30,12 @@ abase在查询的时候会自动做表连接。将两张表做hash join操作：
 3.当not in中包含null值时，无结果集
 ```
 
-
-
 ## 3.like条件无索引
 
 ```
 前，后模糊匹配，都需要建立索引，防止大量的全表扫描。
 全模糊匹配程序上可以控制输入的字符个数，防止全表扫描，返回大量数据。
 ```
-
 
 ## 4.对join，left join的使用,将条件放到on和where后面的区别问题
 
@@ -77,7 +73,7 @@ select * form tab1 left join tab2 on (tab1.size = tab2.size and tab2.name=’AAA
 
 [组合多个索引](https://www.postgresql.org/docs/10/indexes-bitmap-scans.html)
 
-## 6.inser使用 
+## 6.insert使用
 
 ### 1.多条insert数据，建议修改为insert values形式
 
@@ -90,7 +86,6 @@ Caused by: java.io.IOException: Tried to send an out-of-range integer as a 2-byt
 pg的jdbc driver对prepared Statement的参数 set的时候，client端的一个发送大小限制在2-byte。
 相当于所有的values里面的字段总和不能超过32767，开发环境的数据要少点所以没复现。
 ```
-
 
 ## 7.删除重复数据
 
@@ -179,7 +174,7 @@ to_char(cw.d_cjsj, 'yyyy-MM') >= to_char((now() - INTERVAL '1 years' + INTERVAL 
 同实例2，该sql可以直接传入日期查询。
 ```
 
-### 4.使用like获取当月数据 
+### 4.使用like获取当月数据
 
 ```sql
 explain analyze 
@@ -195,7 +190,7 @@ Aggregate (cost=1002.18..1002.19 rows=1 width=0)
 				Index Cond: ((d_crsj >= '2018-03-01 00:00:00'::timestamp without time zone) AND (d_crsj < '2018-04-01 00:00:00'::timestamp without time zone))
 ```
 
-### 5.字段顺序不规范 
+### 5.字段顺序不规范
 
 ```sql
 1.不规范写法
@@ -222,8 +217,6 @@ select *from db_yzgl.t_zfxx where dt_create_time>'2018-06-17 11:07:22.694'
 6、非特殊场景查询，统一要求使用count(*)
 
 ```
-
-
 
 2.查询大量的数据分页，求count(*)
 
@@ -268,15 +261,11 @@ select c_bmid from db_uim.t_ywgy_qx_rysj where c_corpid is null and c_ryid=? and
 除了参数不一样，在短时间内，对一张表大量的执行同一条sql。
 ```
 
-
-
 ## 14.=null问题
 
 ```
 null只能使用is null和is not null来判断
 ```
-
-
 
 [比较操作符](http://www.postgres.cn/docs/10/functions-comparison.html)
 
@@ -331,13 +320,10 @@ and exists (select  c_ajbh from db_zxzhld.t_zhld_zbajxx where n_dbzt = 1 and c_z
 一旦满足条件则立刻返回。所以使用exists的时候子查询可以直接去掉distinct。从执行计划来看使用exists可以消除分组，提高效率。
 ```
 
-
-
-##22.count(distinct xx)改写		
+## 22.count(distinct xx)改写
 
 ```sql
 Select count(distinct c_ajbh) from t_aj
 改写后：
 Select count(*) from (select distinct c_ajbh from t_aj where ...)t2
 ```
-
