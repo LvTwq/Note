@@ -253,8 +253,8 @@ JDBC Connection [HikariProxyConnection@1164241227 wrapping com.mysql.jdbc.JDBC4C
 ==> Preparing: SELECT id,name,age,email FROM user 
 ==> Parameters: 
 <== Columns: id, name, age, email
-<== Row: 2, 吕茂陈, 23, 1106927846@qq.com
-<== Row: 4, 汤卫勤, 22, 23456@163.com
+<== Row: 2, lvmc, 23, 1106927846@qq.com
+<== Row: 4, tangwq, 22, 23456@163.com
 <== Row: 10086, 姜子牙, 9999, 234567@126.com
 <== Total: 3
 ```

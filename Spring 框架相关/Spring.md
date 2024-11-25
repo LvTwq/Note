@@ -219,7 +219,7 @@ System.out.println(student);
   
   /**
    * 使用自己写的 ApplicationContext
-   * @author 吕茂陈
+   * @author lvmc
    */
   public class Test {
       public static void main(String[] args) {
@@ -524,7 +524,7 @@ package com.southwind.factory;
 /**
  * 工厂把汽车创建好提供给外部的调用者
  * 静态工厂：不需要实例化这个工厂，直接调用工厂的静态方法就可以获取汽车对象
- * @author 吕茂陈
+ * @author lvmc
  */
 public class StaticCarFactory {
 
@@ -848,7 +848,7 @@ package com.southwind.utils;
 /**
  * MyInvocationHandler 用来动态创建类，这不是一个代理类，而是帮助创建动态代理类的类
  *
- * @author 吕茂陈
+ * @author lvmc
  */
 public class MyInvocationHandler implements InvocationHandler {
 
@@ -915,7 +915,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 
 /**
- * @author 吕茂陈
+ * @author lvmc
  * @Component 把此类交给 IOC，相当于在 spring.xml 中配了一个 bean
  * @Aspect 称为一个切面对象
  */
@@ -1194,7 +1194,7 @@ public Person person01() {
 /**
  * 创建一个Spring定义的FactoryBean
  *
- * @author 吕茂陈
+ * @author lvmc
  */
 public class ColorFactoryBean implements FactoryBean<Color> {
 

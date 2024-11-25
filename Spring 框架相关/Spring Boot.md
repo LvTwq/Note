@@ -3723,7 +3723,7 @@ JPA:ORM（Object Relational Mapping）；
  * 使用jpa注解配置映射关系
  * @Entity 告诉 jpa 这是一个实体类
  * @Table(name = "tbl_user") 指定和那个数据表对应；如果省略 name，默认表名就是user
- * @author 吕茂陈
+ * @author lvmc
  */
 
 @Getter
