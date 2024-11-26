@@ -301,7 +301,7 @@ public class test2 {
         // 获取接口的代理对象
         AccountRepository accountRepository = sqlSession.getMapper(AccountRepository.class);
         // 添加对象
-//        Account account = new Account(2L, "吕茂陈", "11111", 23);
+//        Account account = new Account(2L, "lvmc", "11111", 23);
 //        int result = accountRepository.save(account);
 
 
@@ -317,7 +317,7 @@ public class test2 {
 
         // 修改对象
 //        Account account1 = accountRepository.findById(1L);
-//        account1.setUsername("汤卫勤");
+//        account1.setUsername("tangwq");
 //        account1.setPassword("1997");
 //        account1.setAge(18);
 //        int update = accountRepository.update(account1);

@@ -126,9 +126,9 @@ mysql> select now();
 mysqlbinlog --no-defaults  /var/lib/mysql/mysqld-bin.000001 --start-position=2425 > 1.sql
 ```
 
-## explain 详情
+## explain
 
-![img]()
+[mysql explain执行计划详解 - xiaoboluo768 - 博客园](https://www.cnblogs.com/xiaoboluo768/p/5400990.html)
 
 # 集群
 
@@ -148,3 +148,19 @@ change master to master_host='A',master_user='用户名',master_password='密码
 start slave;
 show master status\G
 ```
+
+# 和 PostgreSQL 的区别
+
+1、架构层级不同
+
+MySQL：实例-数据库-表
+
+PostgreSQL：实例-数据库-schema-表
+
+2、执行计划
+
+3、语法
+
+4、函数
+
+5、性能：PostgreSQL 更适合写入密集型

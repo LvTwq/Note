@@ -1021,7 +1021,7 @@ public String session(HttpServletRequest request){
     HttpSession session = request.getSession();
     User user = new User();
     user.setId(1);
-    user.setName("吕茂陈");
+    user.setName("lvmc");
     // 存到 session 里面
     session.setAttribute("user",user);
     return "view";
@@ -1031,7 +1031,7 @@ public String session(HttpServletRequest request){
 public String session2(HttpSession session){
     User user = new User();
     user.setId(1);
-    user.setName("吕茂陈");
+    user.setName("lvmc");
     session.setAttribute("user",user);
     return "view";
 }
