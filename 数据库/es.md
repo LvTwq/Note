@@ -70,7 +70,6 @@ docker run --name kibana --link=elasticsearch:elasticsearch -p 5601:5601 -d kiba
 * `fox`和 `foxes`非常相似，就像 `dog`和 `dogs`；他们有相同的词根。
 * `jumped`和 `leap`，尽管没有相同的词根，但他们的意思很相近。他们是同义词。
 
-
 # 查询和聚合的基础使用
 
 ## 相关字段解释
@@ -159,42 +158,60 @@ GET /bank/_search
 
 ## 查询条件(query or filter)
 
-在bool查询的子句中同时具备query/must 和 filter
-两者都可以写查询条件，而且语法也类似。区别在于，query 上下文的条件是用来给文档打分的，匹配越好 _score 越高；filter 的条件只产生两种结果：符合与不符合，后者被过滤掉
+#### **`bool` 查询**
+
+`bool` 查询支持多种子句，包括：
+
+* **`must`** ：表示“必须满足”的条件，相当于逻辑 AND。
+* **`should`** ：表示“可以满足”的条件，相当于逻辑 OR。
+* **`must_not`** ：表示“必须不满足”的条件，相当于逻辑 NOT。
+* **`filter`** ：表示“过滤条件”，不会影响评分。
 
 ```sh
-GET /bank/_search
 {
   "query": {
     "bool": {
       "must": [
-        {
-          "match": {
-            "state": "ND"
-          }
-        }
+        { "match": { "title": "Elasticsearch" } }
+      ],
+      "should": [
+        { "match": { "tags": "search" } },
+        { "match": { "tags": "engine" } }
       ],
       "filter": [
-        {
-          "term": {
-            "age": "40"
-          }
-        },
-        {
-          "range": {
-            "balance": {
-              "gte": 20000,
-              "lte": 30000
-            }
-          }
-        }
+        { "term": { "status": "published" } },
+        { "range": { "publish_date": { "gte": "2024-01-01" } } }
       ]
+    }
+  }
+}
+
+```
+
+**解释** ：
+
+* `must`：文档 `title` 必须包含 "Elasticsearch"。
+* `should`：文档中 `tags` 包含 "search" 或 "engine"，会提升评分，但不是必须条件。
+* `filter`：过滤出 `status` 为 `published` 且 `publish_date` 大于等于 2024 年的数据。
+
+## 聚合查询(Aggregation)
+
+### terms用法
+
+类似SQL中的 `in` 操作符，用于匹配字段的多个可能值。比 `match`更高效，因为它不会分词
+
+```json
+{
+  "query": {
+    "terms": {
+      "field_name": ["value1", "value2", "value3"]
     }
   }
 }
 ```
 
-## 聚合查询(Aggregation)
+* **field_name** ：指定要查询的字段名。
+* **["value1", "value2", "value3"]** ：这是一个数组，包含多个可能的值。如果字段的值与数组中的任何一个值匹配，文档就会被认为符合查询条件。
 
 ### 简单聚合
 
@@ -205,6 +222,7 @@ GET /bank/_search
 {
   "size": 0,
   "aggs": {
+// 自己取的分组名
     "group_by_state": {
       "terms": {
         "field": "state.keyword"
@@ -213,6 +231,51 @@ GET /bank/_search
   }
 }
 ```
+
+### range聚合
+
+```json
+{
+  "size": 0,
+  "aggs": {
+    "price_ranges": {
+      "range": {
+        "field": "price",
+        "ranges": [
+          { "to": 50 },
+          { "from": 50, "to": 100 },
+          { "from": 100 }
+        ]
+      }
+    }
+  }
+}
+
+```
+
+range 聚合将 price 字段的值分为三个范围：小于 50、50 到 100、100 以上。
+
+### 度量聚合
+
+用于对数值字段执行统计计算，如求和、平均、最大值、最小值等。
+
+```json
+{
+  "size": 0,
+  "aggs": {
+    "average_price": {
+      "avg": {
+        "field": "price"
+      }
+    }
+  }
+}
+
+```
+
+avg 聚合计算 price 字段的平均值
+
+改成sum，`sum` 聚合计算 `price` 字段的所有值之和
 
 ### 嵌套聚合
 
@@ -933,8 +996,6 @@ POST /_analyze
 }
 ```
 
-
-
 # 如何创建快照
 
 ## 仓库
@@ -952,7 +1013,6 @@ curl -XPUT 'http://localhost:9200/_snapshot/my_backup' -d '{
 # 查询仓库
 curl -XGET 'http://localhost:9200/_snapshot/my_backup?pretty'
 ```
-
 
 ## 快照
 

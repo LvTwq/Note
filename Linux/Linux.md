@@ -288,11 +288,6 @@ ll /proc/进程id
 ll /proc/进程id/fd/
 ```
 
-每个ip都有那么多端口，无法从外部端口直接访问内部应用的，所以要做映射，
-在url上输入 ip:port（外部端口），映射成内部应用提供的端口才能访问该应用
-CONTAINER ID   IMAGE               COMMAND                  CREATED             STATUS                          PORTS                                       NAMES
-
-82b04f0e890e   isc-eureka-server   "sh -c 'java $PARAMS…"   About an hour ago   Up About an hour                0.0.0.0:9861->8761/tcp, :::9861->8761/tcp   docker-compose_isc-eureka-server_1
 
 ## Java 进程
 

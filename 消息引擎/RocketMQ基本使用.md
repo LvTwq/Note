@@ -28,7 +28,7 @@
 
 一般情况，为了保证系统的稳定性，如果系统负载超过阈值，就会阻止用户请求，这会影响用户体验，而如果使用消息队列将请求缓存起来，等待系统处理完毕后通知用户下单完毕，这样总不能下单体验要好。
 
-<u>处于经济考量目的：</u>
+`<u>`处于经济考量目的：`</u>`
 
 业务系统正常时段的QPS如果是1000，流量最高峰是10000，为了应对流量高峰配置高性能的服务器显然不划算，这时可以使用消息队列对峰值流量削峰
 
@@ -51,13 +51,11 @@
   系统引入的外部依赖越多，系统稳定性越差。一旦MQ宕机，就会对业务造成影响。
 
   如何保证MQ的高可用？
-
 * 系统复杂度提高
 
   MQ的加入大大增加了系统的复杂度，以前系统间是同步的远程调用，现在是通过MQ进行异步调用。
 
   如何保证消息没有被重复消费？怎么处理消息丢失情况？那么保证消息传递的顺序性？
-
 * 一致性问题
 
   A系统处理完业务，通过MQ给B、C、D三个系统发消息数据，如果B系统、C系统处理成功，D系统处理失败。
@@ -66,7 +64,7 @@
 
 ## 1.3 各种MQ产品的比较
 
-常见的MQ产品包括Kafka、ActiveMQ、RabbitMQ、RocketMQ。 
+常见的MQ产品包括Kafka、ActiveMQ、RabbitMQ、RocketMQ。
 
 ![](https://note.youdao.com/yws/api/personal/file/7E929875DDBD4A6ABF98A60D8BCDDF04?method=download&shareKey=7fbb3e3bb1f8ad4b003ec6660428e9fc)
 
@@ -85,9 +83,7 @@ RocketMQ最新版本：4.5.1
 ### 2.2.2 环境要求
 
 * Linux64位系统
-
 * JDK1.8(64位)
-
 * 源码安装需要安装Maven 3.2.x
 
 ## 2.2 安装RocketMQ
@@ -137,7 +133,7 @@ vi runserver.sh
 
 * 参考设置：
 
-```JAVA_OPT="${JAVA_OPT} -server -Xms256m -Xmx256m -Xmn128m -XX:MetaspaceSize=128m  -XX:MaxMetaspaceSize=320m"```
+``JAVA_OPT="${JAVA_OPT} -server -Xms256m -Xmx256m -Xmn128m -XX:MetaspaceSize=128m  -XX:MaxMetaspaceSize=320m"``
 
 ## 2.4 测试RocketMQ
 
@@ -186,7 +182,6 @@ sh bin/mqshutdown broker
 ### 3.2.1 集群特点
 
 - NameServer是一个几乎无状态节点，可集群部署，节点之间无任何信息同步。
-
 - Broker部署相对复杂，Broker分为Master与Slave，一个Master可以对应多个Slave，但是一个Slave只能对应一个Master，Master与Slave的对应关系通过指定相同的BrokerName，不同的BrokerId来定义，BrokerId为0表示Master，非0表示Slave。Master也可以部署多个。每个Broker与NameServer集群中的所有节点建立长连接，定时注册Topic信息到所有NameServer。
 - Producer与NameServer集群中的其中一个节点（随机选择）建立长连接，定期从NameServer取Topic路由信息，并向提供Topic服务的Master建立长连接，且定时向Master发送心跳。Producer完全无状态，可集群部署。
 - Consumer与NameServer集群中的其中一个节点（随机选择）建立长连接，定期从NameServer取Topic路由信息，并向提供Topic服务的Master、Slave建立长连接，且定时向Master、Slave发送心跳。Consumer既可以从Master订阅消息，也可以从Slave订阅消息，订阅规则由Broker配置决定。
@@ -236,10 +231,10 @@ sh bin/mqshutdown broker
 
 ### 3.3.3 服务器环境
 
-| **序号** | **IP**         | **角色**                 | **架构模式**    |
-| -------- | -------------- | ------------------------ | --------------- |
-| 1        | 192.168.25.135 | nameserver、brokerserver | Master1、Slave2 |
-| 2        | 192.168.25.138 | nameserver、brokerserver | Master2、Slave1 |
+| **序号** | **IP**   | **角色**           | **架构模式** |
+| -------------- | -------------- | ------------------------ | ------------------ |
+| 1              | 192.168.25.135 | nameserver、brokerserver | Master1、Slave2    |
+| 2              | 192.168.25.138 | nameserver、brokerserver | Master2、Slave1    |
 
 ### 3.3.4 Host添加信息
 
@@ -697,7 +692,6 @@ nohup sh mqbroker -c /usr/local/rocketmq/conf/2m-2s-sync/broker-a-s.properties &
 
 启动后通过JPS查看启动进程
 
-
 ### 3.3.12 查看日志
 
 ```sh
@@ -711,7 +705,7 @@ tail -500f ~/logs/rocketmqlogs/broker.log
 
 ### 3.4.1 使用方式
 
-进入RocketMQ安装位置，在bin目录下执行```./mqadmin {command} {args}``` 
+进入RocketMQ安装位置，在bin目录下执行 ``./mqadmin {command} {args}``
 
 ### 3.4.2 命令介绍
 
@@ -1375,7 +1369,7 @@ tail -500f ~/logs/rocketmqlogs/broker.log
   <td rowspan=10 height=312 class=xl69 width=87 style='border-bottom:1.0pt;
   height:232.0pt;border-top:none;width:65pt'>consumeMessage</td>
   <td rowspan=10 class=xl72 width=87 style='border-bottom:1.0pt;
-  border-top:none;width:65pt'>消费消息。可以根据offset、开始&amp;结束时间戳、消息队列消费消息，配置不同执行不同消费逻辑，详见ConsumeMessageCommand。</td>
+  border-top:none;width:65pt'>消费消息。可以根据offset、开始&结束时间戳、消息队列消费消息，配置不同执行不同消费逻辑，详见ConsumeMessageCommand。</td>
   <td class=xl67 width=87 style='width:65pt'>-h</td>
   <td class=xl68 width=87 style='width:65pt'>打印帮助</td>
  </tr>
@@ -1908,7 +1902,7 @@ tail -500f ~/logs/rocketmqlogs/broker.log
 
 ### 3.5.1 概述
 
-`RocketMQ`有一个对其扩展的开源项目[incubator-rocketmq-externals](https://github.com/apache/rocketmq-externals)，这个项目中有一个子模块叫`rocketmq-console`，这个便是管理控制台项目了，先将[incubator-rocketmq-externals](https://github.com/apache/rocketmq-externals)拉到本地，因为我们需要自己对`rocketmq-console`进行编译打包运行。
+`RocketMQ`有一个对其扩展的开源项目[incubator-rocketmq-externals](https://github.com/apache/rocketmq-externals)，这个项目中有一个子模块叫 `rocketmq-console`，这个便是管理控制台项目了，先将[incubator-rocketmq-externals](https://github.com/apache/rocketmq-externals)拉到本地，因为我们需要自己对 `rocketmq-console`进行编译打包运行。
 
 ![](img/rocketmq-console.png)
 
@@ -1920,7 +1914,7 @@ cd rocketmq-console
 mvn clean package -Dmaven.test.skip=true
 ```
 
-注意：打包前在```rocketmq-console```中配置```namesrv```集群地址：
+注意：打包前在 ``rocketmq-console``中配置 ``namesrv``集群地址：
 
 ```sh
 rocketmq.config.namesrvAddr=192.168.25.135:9876;192.168.25.138:9876
@@ -1932,7 +1926,7 @@ rocketmq.config.namesrvAddr=192.168.25.135:9876;192.168.25.138:9876
 java -jar rocketmq-console-ng-1.0.0.jar
 ```
 
-启动成功后，我们就可以通过浏览器访问`http://localhost:8080`进入控制台界面了，如下图：
+启动成功后，我们就可以通过浏览器访问 `http://localhost:8080`进入控制台界面了，如下图：
 
 ![](img/rocketmq-console2.png)
 
@@ -2535,7 +2529,7 @@ public void subscribe(finalString topic, final MessageSelector messageSelector)
 
 ### 4.5.2 消息生产者
 
-发送消息时，你能通过`putUserProperty`来设置消息的属性
+发送消息时，你能通过 `putUserProperty`来设置消息的属性
 
 ```java
 DefaultMQProducer producer = new DefaultMQProducer("please_rename_unique_group_name");
@@ -2573,8 +2567,6 @@ consumer.start();
 ### 4.6.1 流程分析
 
 ![](https://note.youdao.com/yws/api/personal/file/AD62350FA07645808A9AE4DAD31EEE06?method=download&shareKey=74fc57b47e9241492845f0831a16ce28)
-
-
 
 上图说明了事务消息的大致方案，其中分为两个流程：正常事务消息的发送及提交、事务消息的补偿流程。
 
@@ -2677,3 +2669,63 @@ public class TransactionListenerImpl implements TransactionListener {
 4. 事务性消息可能不止一次被检查或消费。
 5. 提交给用户的目标主题消息可能会失败，目前这依日志的记录而定。它的高可用性通过 RocketMQ 本身的高可用性机制来保证，如果希望确保事务消息不丢失、并且事务完整性得到保证，建议使用同步的双重写入机制。
 6. 事务消息的生产者 ID 不能与其他类型消息的生产者 ID 共享。与其他类型的消息不同，事务消息允许反向查询、MQ服务器能通过它们的生产者 ID 查询到消费者。
+
+
+
+
+
+# Rocket MQ
+
+## 为什么要用消息中间件
+
+* 应用解耦
+
+系统的耦合度越高，容错性就越低，比如电商系统中的下单操作，如果耦合调用库存系统、物流系统，支付系统，任何一个系统暂时不可用，都会造成下单操作异常，影响用户使用体验。
+
+使用消息队列，系统的耦合度就降低了。比如物流系统发生故障，需要几分钟才能修复，这段时间内，物流系统要处理的数据被缓存到消息队列中，用户下单操作正常完成，物流系统恢复之后，处理存在消息队列中的订单消息即可。
+
+* 流量削峰
+
+应用系统如果遇到请求量瞬间猛增，有可能会将系统压垮，有了消息队列可以将大量请求缓存起来，慢慢处理，可以提高系统的稳定性
+
+* 数据分发
+
+数据的生产方**不需要关心谁来使用数据**，只需要将数据发送到消息队列，数据使用方直接在消息队列中获取即可。
+
+## MQ消息是不是有序性的
+
+有序性指的是可以按照消息的发送顺序来消费，队列本身就是先进先出的结构，RocketMQ 可以保证消息有序，可以分为**分区有序**或者全局有序。
+
+顺序消费的原理：
+
+在默认情况下消息发送会采取**轮询方式**把消息发送到不同的**queue（分区队列）**，而消息消费时会从**多个queue上**拉取消息，这种情况只能保证分区有序（建topic的时候在Broker模块中创建四个的queue）
+
+但如果控制发送的顺序消息只依次发送到同一个queue中，则全局有序
+
+## 多个消费者如何保障消息的有序性
+
+生产者发送了两条顺序消息，先是insert，后是update，分别分配到两个MessageQueue中，消费者组中的两台机器分别处理两个队列的消息，这个时候是无法保证顺序性的，有可能会先执行update，后执行insert，导致数据发生错误。
+
+**把需要保持顺序的消息都放入到同一个MessageQueue中，让同一台机器处理**
+
+可以根据唯一ID与队列的数量进行hash运算，保证这些消息进入到同一个队列中，最简单的算法就是取余运算了
+
+## MQ消息积压了如何处理
+
+如果这个Topic的MessageQueue比较多，consumer比较少，可以考虑增加消费者
+
+但如果两者数量相等，这种方法就没用，考虑优化业务系统的代码逻辑，加快执行时间，同时注意生产者的逻辑，是不是有超时重发
+
+## 重复消费
+
+### 为什么会重复消费：
+
+1、生产者发送消息的时候使用了重试机制，发送消息后由于网络原因没有收到MQ的响应信息，报了个超时异常，然后又去重新发送了一次消息
+
+2、在消费者处理了一条消息后会返回一个offset给MQ，证明这条消息被处理过了。但是，假如这条消息已经处理过了，在返回offset给MQ的时候服务宕机了，MQ就没有接收到这条offset，那么服务重启后会再次消费这条消息
+
+### 如何解决重复消费
+
+通过幂等性来保证——只要保证**消费者**端重复消费的消息不对结果产生影响；
+
+不同的Message ID对应的消息内容可能相同，所以不能以Message ID作为处理依据，最好的方式是以业务唯一标识作为依据，业务唯一标识可以通过消息Key设置，比如订单号，新增的时候查一下有没有这个订单，如果有了，就不再消费
