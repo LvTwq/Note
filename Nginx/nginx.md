@@ -180,7 +180,7 @@ location /clientlog {
 
 ### 配置服务器地址
 
-```shell
+```bash
 # 定义一个HTTP服务组
 upstream myserver {
 	server xxx.xx.xx.14:8080;
@@ -188,7 +188,7 @@ upstream myserver {
 }
 ```
 
-```shell
+```bash
 server {
 	listen    80;
 	server_name xxx.xx.xx.14
@@ -238,10 +238,11 @@ server {
 
 指定轮询几率，weight和访问比率成正比，用于后端服务器性能不均的情况
 
-```shell
+```bash
 upstream bakend {  
   server 192.168.0.14 weight=10;  
   server 192.168.0.15 weight=10;  
+}
 ```
 
 ### 源地址哈希法-ip_hash
@@ -283,11 +284,11 @@ VRRP全称 Virtual Router Redundancy Protocol，即 虚拟路由冗余协议。�
 
 
 vrrp_instance VI_1 {
-    state MASTER            //主从划分，主服务器为MASTER，从服务器为BACKUP
-    interface ens33         //设置为当前网卡（通过ifconfig查看）
-    virtual_router_id 51    //主从服务器设置相同的id
+    state MASTER            // 主从划分，主服务器为MASTER，从服务器为BACKUP
+    interface ens33         // 指定绑定虚拟 IP 的网卡
+    virtual_router_id 51    // VRRP 路由器组 ID（同一组中 MASTER 和 BACKUP 要一致）
     priority 150            // 权重大的是主
-    advert_int 1
+    advert_int 1	    // 心跳包的间隔时间（单位：秒）
     authentication {
         auth_type PASS
         auth_pass 1111

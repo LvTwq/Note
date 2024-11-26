@@ -189,7 +189,7 @@ tcpdump -i any -nn -s0 -v host 1.1.0.9
 
 tcpdump -i any port 8400 -w upload.cap
 
-tcpdump -nni any port 53 -w aaa.pcap
+tcpdump -nni any port 53 and src 源IP -w aaa.pcap
 ```
 
 * -i : 选择要捕获的接口，通常是以太网卡或无线网卡，也可以是 vlan 或其他特殊接口。如果该系统上只有一个网络接口，则无需指定。
