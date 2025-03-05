@@ -288,19 +288,6 @@ ll /proc/进程id
 ll /proc/进程id/fd/
 ```
 
-
-## Java 进程
-
-```shell
-[root@localhost share]# jps -l
-```
-
--q：只输出进程 ID
--m：输出传入 main 方法的参数
--l：输出完全的包名，应用主类名，jar的完全路径名
--v：输出jvm参数
--V：输出通过flag文件传递到JVM中的参数
-
 ## top
 
 ```sh
