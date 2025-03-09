@@ -2,6 +2,16 @@
 
 # 一、常用命令
 
+```shell
+[root@localhost share]# jps -l
+```
+
+-q：只输出进程 ID
+-m：输出传入 main 方法的参数
+-l：输出完全的包名，应用主类名，jar的完全路径名
+-v：输出jvm参数
+-V：输出通过flag文件传递到JVM中的参数
+
 ```sh
 jar tf jar包名称 | find "寻找的class名称"
 # 结果：BOOT-INF/classes/xxx.class
@@ -235,8 +245,6 @@ jstat -class <pid>
 ## StackOverflowError
 
 是一种堆栈溢出错误，通常发生在递归方法或无限循环中，导致方法调用的堆栈深度超出了 JVM 的限制
-
-
 
 # 类加载
 
