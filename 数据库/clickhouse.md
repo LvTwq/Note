@@ -1,6 +1,11 @@
 [什么是ClickHouse？ | ClickHouse Docs](https://clickhouse.com/docs/zh)
 
-# 基本使用
+# 介绍
+
+[什么是ClickHouse？ | ClickHouse Docs](https://clickhouse.com/docs/zh)
+
+
+基本使用
 
 ## 建表
 
@@ -34,10 +39,9 @@ ALTER TABLE logs DROP PARTITION '2024-01';  -- 删除2024年1月的数据
 
 3、**分区修整（`Merging`）** ：ClickHouse会定期进行分区修整，将小的分区合并成较大的分区。这有助于减少存储空间的浪费，并提高查询性能
 
-
 ### primary key
 
-并不是传统意义上的唯一性约束，而是一个  **排序字段** 
+并不是传统意义上的唯一性约束，而是一个  **排序字段**
 
 指定了数据在每个分区内的排序方式
 
@@ -49,7 +53,6 @@ ALTER TABLE logs DROP PARTITION '2024-01';  -- 删除2024年1月的数据
 
 * 定义了表中数据的物理排序方式。在MergeTree系列的表引擎中，数据首先按照 `ORDER BY`中指定的列进行排序存储
 * 这种排序是持久化的，意味着数据在磁盘上是按照这个顺序存储的
-
 
 ### MergeTree
 
@@ -68,7 +71,6 @@ ALTER TABLE logs DROP PARTITION '2024-01';  -- 删除2024年1月的数据
 ### SummingMergeTree
 
 适用于进行聚合操作的场景。`SummingMergeTree` 会对具有相同主键的数据行进行合并并进行求和操作，适合存储和处理实时统计数据
-
 
 # SQL 优化
 
