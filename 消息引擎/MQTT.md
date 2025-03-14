@@ -65,7 +65,6 @@
 * **`{GroupName}`** ：订阅组名称（例如你的 `zz`），代表消费者分组，同一分组的客户端的订阅会自动负载均衡。
 * **`{ActualTopic}`** ：实际的消息 Topic（例如你的 `temp`），支持通配符。
 
-
 # 核心机制
 
 ## Qos 等级
@@ -86,8 +85,40 @@
 * `Will Topic`、`Will Payload`、`Will QoS`、`Will Retain`。
 * **典型场景** ：设备离线时触发告警或状态更新。
 
-
 ## Retained Message（保留消息）
 
 * **机制** ：Broker 为 Topic 保存最新一条消息，新订阅者立即收到。
 * **用途** ：设备首次上线时获取最新状态（如传感器最新读数）。
+
+## 系统消息
+
+`$SYS` 主题用于 **系统消息** ，它提供关于 **MQTT 代理（Broker）状态**的监控信息，例如客户端连接数、消息统计、主题订阅情况等。
+
+* `$SYS` 是一个 **保留主题（Reserved Topic）** ，只能由 MQTT 代理发布， **客户端不能向 `$SYS` 主题发布消息** 。
+* 订阅 `$SYS/#` 可以获取代理的所有系统信息
+
+例如：
+
+```
+$SYS/brokers/emqx@emqx.lvmc.top/clients/#
+```
+
+* **`$SYS/brokers/`** → 表示这个主题属于代理的系统状态信息。
+* **`emqx@emqx.lvmc.top/`** → 代表  **MQTT 代理实例 ID** ，通常是 `节点名称@主机名`，用于标识不同的 EMQX 代理节点。
+* **`clients/`** → 关注 **客户端相关信息** 。
+* **`#`** （通配符） → 订阅 `clients/` 下的所有子主题，意味着获取所有客户端的信息
+
+如果你订阅 `$SYS/brokers/emqx@emqx.lvmc.top/clients/#`，你可能会收到以下子主题的数据：
+
+| 主题                                                                  | 说明                                 |
+| --------------------------------------------------------------------- | ------------------------------------ |
+| `$SYS/brokers/emqx@emqx.lvmc.top/clients/connected`                 | 当前已连接的客户端数量               |
+| `$SYS/brokers/emqx@emqx.lvmc.top/clients/disconnected`              | 断开连接的客户端数量                 |
+| `$SYS/brokers/emqx@emqx.lvmc.top/clients/clientid123`               | 特定客户端 `clientid123`的状态信息 |
+| `$SYS/brokers/emqx@emqx.lvmc.top/clients/clientid123/connected`     | `clientid123`是否在线              |
+| `$SYS/brokers/emqx@emqx.lvmc.top/clients/clientid123/subscriptions` | `clientid123`订阅的主题列表        |
+
+# 问题排查思路
+
+* 直接用MQTTX连现场环境，监听 `$SYS/brokers/emqx@emqx.lvmc.top/clients/connected`，需要确认现场到底是单机还是集群
+* 下发消息时，要看到底是发给哪个域名/IP
