@@ -534,6 +534,12 @@ yum install iotop
 
 ```
 
+## 查看进程是否使用到了 Swap
+
+```sh
+cat /proc/$pid/smaps | egrep '^(Swap|Size)'
+```
+
 # 用户/用户组
 
 ```bash

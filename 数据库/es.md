@@ -1039,3 +1039,35 @@ curl -XDELETE "127.0.0.1:9200/_snapshot/my_backup/snapshot_1"
     \"include_global_state\": false
   }"
 ```
+
+# 排错
+
+```bash
+# 检查集群健康状态
+curl -X GET "http://localhost:9200/_cluster/health?pretty"
+
+# 确认是哪些索引异常
+curl -X GET "http://localhost:9200/_cat/indices?v"
+
+# 查看未分配的分片
+curl -X GET "http://localhost:9200/_cluster/allocation/explain?pretty"
+
+# 尝试强制分配分片
+curl -X POST "http://localhost:9200/_cluster/reroute" -H 'Content-Type: application/json' -d '
+{
+  "commands": [
+    {
+      "allocate_stale_primary": {
+        "index": "user_data_2024",
+        "shard": 2,
+        "node": "your-node-name",
+        "accept_data_loss": true
+      }
+    }
+  ]
+}'
+
+
+# 删除索引
+curl -XDELETE http://localhost:9200/twitter,my_index
+```
