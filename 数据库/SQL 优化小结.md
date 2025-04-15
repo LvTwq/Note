@@ -327,3 +327,24 @@ Select count(distinct c_ajbh) from t_aj
 改写后：
 Select count(*) from (select distinct c_ajbh from t_aj where ...)t2
 ```
+
+## 23.分页怎么优化
+
+游标分页法：
+
+ **适用场景** ：APP瀑布流/无限滚动列表
+
+ **实现原理** ：记录最后一条记录的标识值
+
+```sql
+-- 第一页
+SELECT * FROM table 
+WHERE create_time > '2023-01-01'
+ORDER BY id DESC LIMIT 10;
+
+-- 后续分页（携带最后一条记录的id和时间）
+SELECT * FROM table 
+WHERE id < last_id AND create_time > '2023-01-01' -- 通过索引快速定位
+ORDER BY id DESC LIMIT 10;
+
+```

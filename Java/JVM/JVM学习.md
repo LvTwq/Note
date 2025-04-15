@@ -2,7 +2,7 @@
 
 # 一、常用命令
 
-```shell
+```bash
 [root@localhost share]# jps -l
 ```
 
@@ -22,6 +22,11 @@ mkdir BOOT-INF\classes\
 # 替换
 jar uvf xxx.jar BOOT-INF/classes/
 
+```
+
+查看jvm参数
+```bash
+jinfo pid
 ```
 
 # 二、常见参数
