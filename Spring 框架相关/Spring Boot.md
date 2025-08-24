@@ -201,113 +201,17 @@ public class HelloWorldMainApplication {
 - `@ComponentScan`： 扫描被 `@Component` (`@Service`,`@Controller`)注解的bean，注解默认会扫描该类所在的包下所有的类。
 - `@Configuration`：允许在上下文中注册额外的bean或导入其他配置类
 
-点进去 @**SpringBootApplication** 可以看到这是一个组合注解
+其工作原理如下：
 
-```java
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Inherited
-@SpringBootConfiguration
-@EnableAutoConfiguration
-@ComponentScan(excludeFilters = {
-      @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
-      @Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
-public @interface SpringBootApplication {
-```
+1. 当 Spring Boot 应用启动时，`@EnableAutoConfiguration` 会触发一个名为 `AutoConfigurationImportSelector` 的组件。
+2. 这个组件会从类路径下的 `META-INF/spring.factories` 文件（旧版）或 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 文件（新版推荐）中，读取所有 `org.springframework.boot.autoconfigure.EnableAutoConfiguration` 键对应的自动配置类的全限定名。
+3. 这些配置类（通常以 `XxxAutoConfiguration` 命名）会被加载。但它们**不是无条件生效**的。
+4. 每个自动配置类上都标注了 `@Conditional` 系列注解，如：
+   * `@ConditionalOnClass`：检查类路径是否存在特定类。
+   * `@ConditionalOnMissingBean`：检查容器中是否缺少某个 Bean。
+   * `@ConditionalOnProperty`：检查配置属性是否存在。
+5. Spring Boot 会根据这些条件判断该配置类是否应该被应用。只有条件满足时，配置类中的 `@Bean` 方法才会被执行，从而向容器中添加预设的 Bean（如 `DataSource`、`RedisTemplate` 等）。
 
-@**SpringBootConfiguration**:Spring Boot的配置类；
-
-    标注在某个类上，表示这是一个Spring Boot的配置类；
-
-    @**Configuration**:配置类上来标注这个注解；
-
-    配置类 -----  配置文件；配置类也是容器中的一个组件；@Component
-
-@**EnableAutoConfiguration**：开启自动配置功能；
-
-    以前我们需要配置的东西，Spring Boot帮我们自动配置；@**EnableAutoConfiguration**告诉SpringBoot开启自动配置功能；这样自动配置才能生效；
-
-```java
-@AutoConfigurationPackage
-@Import(EnableAutoConfigurationImportSelector.class)
-public @interface EnableAutoConfiguration {
-```
-
-    @**AutoConfigurationPackage**：自动配置包
-
-    @**Import**(AutoConfigurationPackages.Registrar.class)：
-
-    Spring的底层注解@Import，给容器中导入一个组件；
-
-    导入的组件由AutoConfigurationPackages.Registrar.class；
-
-将主配置类（@SpringBootApplication标注的类）的所在包及下面所有子包里面的所有组件扫描到Spring容器；
-
-    @**Import**(EnableAutoConfigurationImportSelector.class)；
-
-    给容器中导入组件？
-
-    **EnableAutoConfigurationImportSelector**：导入哪些组件的选择器；
-
-    将所有需要导入的组件以全类名的方式返回；这些组件就会被添加到容器中；
-
-    会给容器中导入非常多的自动配置类（xxxAutoConfiguration）；就是给容器中导入这个场景需要的所有组件，并配置好这些组件；![自动配置类](..\images\搜狗截图20180129224104.png)
-
-有了自动配置类，免去了我们手动编写配置注入功能组件等的工作；
-
-    SpringFactoriesLoader.loadFactoryNames(EnableAutoConfiguration.class,classLoader)；
-
-Spring Boot在启动的时候从类路径下的META-INF/spring.factories中获取EnableAutoConfiguration指定的值，将这些值作为自动配置类导入到容器中，自动配置类就生效，帮我们进行自动配置工作；
-
-以前我们需要自己配置的东西，自动配置类都帮我们；
-
-J2EE的整体整合解决方案和自动配置都在spring-boot-autoconfigure-2.0.7.RELEASE.jar；
-
-## 6、使用Spring Initializer快速创建Spring Boot项目
-
-### 1、IDEA：使用 Spring Initializer快速创建项目
-
-![avatar](..\images\快速创建spring boot 1.png)
-
-![avatar](..\images\快速创建spring boot 2.png)
-
-![avatar](..\images\快速创建spring boot 3.png)
-
-IDE都支持使用Spring的项目创建向导快速创建一个Spring Boot项目；
-
-选择我们需要的模块；向导会联网创建Spring Boot项目；
-
-默认生成的Spring Boot项目（.mvn, .gitignore, mvnw,mvnw.cmd 等文件都可以删掉）
-
-- 主程序已经生成好了，我们只需要我们自己的逻辑
-- resources文件夹中目录结构
-  - static：保存所有的静态资源； js css  images；
-  - templates：保存所有的模板页面；（Spring Boot默认jar包使用嵌入式的Tomcat，默认不支持JSP页面）；可以使用模板引擎（freemarker、thymeleaf）；
-  - application.properties：Spring Boot应用的配置文件；可以修改一些默认设置；
-
-### 2、STS使用 Spring Starter Project快速创建项目
-
----
-
-在 controller 层写一个 HelloController.java
-
-```java
-//这个类的所有方法返回的数据直接写给浏览器，（如果是对象转为json数据）
-/*@ResponseBody
-@Controller*/
-@RestController
-public class HelloController {
-
-
-    @RequestMapping("/hello")
-    public String hello(){
-        return "hello world quick!"; // 字符串要写给浏览器，所以需要 @ResponseBody 注解
-    }
-
-    // RESTAPI的方式
-}
-```
 
 # 二、配置文件
 
@@ -886,7 +790,7 @@ Positive matches:（自动配置类启用的）
    DispatcherServletAutoConfiguration matched:
       - @ConditionalOnClass found required class 'org.springframework.web.servlet.DispatcherServlet'; @ConditionalOnMissingClass did not find unwanted class (OnClassCondition)
       - @ConditionalOnWebApplication (required) found StandardServletEnvironment (OnWebApplicationCondition)
-      
+  
   
 Negative matches:（没有启动，没有匹配成功的自动配置类）
 -----------------
@@ -898,7 +802,7 @@ Negative matches:（没有启动，没有匹配成功的自动配置类）
    AopAutoConfiguration:
       Did not match:
          - @ConditionalOnClass did not find required classes 'org.aspectj.lang.annotation.Aspect', 'org.aspectj.lang.reflect.Advice' (OnClassCondition)
-      
+  
 ```
 
 # 三、日志
@@ -1427,7 +1331,7 @@ Simple expressions:（表达式语法）
                 #response : (only in Web Contexts) the HttpServletResponse object.
                 #session : (only in Web Contexts) the HttpSession object.
                 #servletContext : (only in Web Contexts) the ServletContext object.
-              
+          
                 ${session.foo}
             3）、内置的一些工具对象：
 #execInfo : information about the template being processed.
@@ -1460,7 +1364,7 @@ Simple expressions:（表达式语法）
     		@{/order/process(execId=${execId},execType='FAST')}
     Fragment Expressions: ~{...}：片段引用表达式
     		<div th:insert="~{commons :: main}">...</div>
-    	
+  
 Literals（字面量）
       Text literals: 'one text' , 'Another one!' ,…
       Number literals: 0 , 34 , 3.0 , 12.3 ,…
@@ -2231,7 +2135,7 @@ public class BasicErrorController extends AbstractErrorController {
 		Map<String, Object> model = Collections.unmodifiableMap(getErrorAttributes(
 				request, isIncludeStackTrace(request, MediaType.TEXT_HTML)));
 		response.setStatus(status.value());
-      
+  
         //去哪个页面作为错误页面；包含页面地址和页面内容
 		ModelAndView modelAndView = resolveErrorView(request, response, status, model);
 		return (modelAndView == null ? new ModelAndView("error", model) : modelAndView);
@@ -2270,7 +2174,7 @@ public class BasicErrorController extends AbstractErrorController {
 	private ModelAndView resolve(String viewName, Map<String, Object> model) {
         //默认SpringBoot可以去找到一个页面？  error/404
 		String errorViewName = "error/" + viewName;
-      
+  
         //模板引擎可以解析这个页面地址就用模板引擎解析
 		TemplateAvailabilityProvider provider = this.templateAvailabilityProviders
 				.getProvider(errorViewName, this.applicationContext);
@@ -2966,7 +2870,7 @@ public ConfigurableApplicationContext run(String... args) {
       analyzers = new FailureAnalyzers(context);
       prepareContext(context, environment, listeners, applicationArguments,
             printedBanner);
-     
+   
        //刷新IOC容器
       refreshContext(context);
       afterRefresh(context, applicationArguments);
@@ -3597,12 +3501,12 @@ public ConfigurableApplicationContext run(String... args) {
       ConfigurableEnvironment environment = prepareEnvironment(listeners,
             applicationArguments);
        		//创建环境完成后回调SpringApplicationRunListener.environmentPrepared()；表示环境准备完成
-     
+   
       Banner printedBanner = printBanner(environment);
-     
+   
        //创建ApplicationContext；决定创建web的ioc还是普通的ioc
       context = createApplicationContext();
-     
+   
       analyzers = new FailureAnalyzers(context);
        //准备上下文环境;将environment保存到ioc中；而且applyInitializers()；
        //applyInitializers()：回调之前保存的所有的ApplicationContextInitializer的initialize方法
@@ -3611,7 +3515,7 @@ public ConfigurableApplicationContext run(String... args) {
       prepareContext(context, environment, listeners, applicationArguments,
             printedBanner);
        //prepareContext运行完成以后回调所有的SpringApplicationRunListener的contextLoaded（）；
-     
+   
        //s刷新容器；ioc容器初始化（如果是web应用还会创建嵌入式的Tomcat）；Spring注解版
        //扫描，创建，加载所有组件的地方；（配置类，组件，自动配置）
       refreshContext(context);
@@ -4024,20 +3928,6 @@ public class HelloServiceAutoConfiguration {
 # 更多SpringBoot整合示例
 
 https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ## 1、自动配置原理
 
