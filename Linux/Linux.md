@@ -153,6 +153,10 @@ curl -w "@curl-format.txt" -o /dev/null -s -L "http://cizixs.com"
 # 简单写法
 curl -w "Total time: %{time_total}\n" http://cizixs.com
 
+# 或者
+time curl
+
+
 # 查看调用过程，可以看到是通过ipv4/ipv6来访问的，如果v6不通，就需要禁用v6
 curl -v www.baidu.com
 ```
@@ -246,6 +250,14 @@ service iptables save
 # 用某DNS查询域名信息
 nslookup 域名 dns服务器
 ```
+
+## nc
+
+```bash
+nc -nvu 192.168.10.10 80
+```
+
+* -u：使用UDP协议
 
 # 进程
 

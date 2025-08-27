@@ -427,6 +427,7 @@ python  18940 root    3w   REG    8,1 117944320     303 /tmp/logtest.txt
 
 实际上，top、pidstat、vmstat 这类工具所汇报的 CPU 性能指标，都源自 /proc 文件系统（比如/proc/loadavg、/proc/stat、/proc/softirqs 等）
 
+
 ## 内存性能分析
 
 通过 free 和 vmstat 确定内存瓶颈，然后，根据内存问题的类型进一步分析内存使用、分配、泄露以及缓存等
@@ -440,6 +441,25 @@ python  18940 root    3w   REG    8,1 117944320     303 /tmp/logtest.txt
 使用 iostat ，发现磁盘I/O 存在性能瓶颈（比如 I/O 使用率过高、响应时间过长或者等待队列长度突然增大等）后，可以再通过 pidstat、 vmstat 等，确认 I/O 的来源。接着，再根据来源的不同，进一步分析文件系统和磁盘的使用率、缓存以及进程的 I/O 等，从而揪出 I/O 问题的真凶
 
 ![img](..\images\Linux优化12.jpg)
+
+
+
+首先，top，观察 wa 的值，**全称是 `iowait`（I/O 等待），如果高的话，说明是cpu等待io耗时久，性能瓶颈在io上。**
+
+```bash
+iostat -x 2 5  # 每2秒输出一次，共5次（观察 %util 和 await）
+```
+
+* **关键指标** ：
+* `%util`：磁盘利用率（若接近 100%，说明磁盘满负荷）。
+* `await`：I/O 平均等待时间（单位 ms，值越大越严重）。
+* `r/s`/`w/s`：读写吞吐量（过高可能需优化业务逻辑）。
+
+```bash
+iotop -oP  # 显示所有正在执行 I/O 的进程
+```
+
+* 观察 `DISK READ`/`DISK WRITE` 列，找到占用 I/O 的进程。
 
 
 ## 网络性能分析
@@ -458,7 +478,6 @@ python  18940 root    3w   REG    8,1 117944320     303 /tmp/logtest.txt
 网络的性能指标也都来源于内核，包括 /proc 文件系统（如 /proc/net）、网络接口以及conntrack等内核模块。
 
 当发现网络不通时，应该查找各个协议层的丢包指标，确认丢包所在的协议层。借助 netstat、tcpdump、bcc 等工具，分析网络的收发数据，并结合内核中的网络选项以及TCP 等网络协议原理，找出问题来源。
-
 
 ## 应用程序瓶颈
 

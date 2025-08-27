@@ -28,11 +28,12 @@ show tables like '%dns%';
 # 查看表结构
 desc tablename;
 
-# 导出数据
-mysqldump -u root -p密码 --compact --skip-comments --skip-add-drop-table --no-create-info --no-create-db --extended-insert=FALSE 数据库名 表1 表2 > user_data.sql
+
+# 导出数据（--no-create-info代表不导出表结构）
+mysqldump -uroot -p密码 --skip-extended-insert --complete-insert --no-create-info --databases ensbrain_plus --tables 表1 表2 > user_data.sql
 
 # 导入数据
-mysql -uroot -p密码 -D数据库名 < update.sql
+mysql -u root -p密码 -D数据库名 < update.sql
 ```
 
 # 性能优化
@@ -80,6 +81,7 @@ select * from information_schema.INNODB_LOCKS;
 
 -- 监控
 show full processlist;
+SELECT * FROM INFORMATION_SCHEMA.PROCESSLIST WHERE COMMAND != 'Sleep' ORDER BY TIME DESC;
 
 -- 慢查询是否开启
 SHOW VARIABLES LIKE 'slow_query_log';

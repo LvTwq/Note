@@ -120,5 +120,8 @@ $SYS/brokers/emqx@emqx.lvmc.top/clients/#
 
 # 问题排查思路
 
+* 看集群概览中，一共有哪些节点
 * 直接用MQTTX连现场环境，监听 `$SYS/brokers/emqx@emqx.lvmc.top/clients/connected`，需要确认现场到底是单机还是集群
 * 下发消息时，要看到底是发给哪个域名/IP
+* 数一下总的在线设备
+* 看有问题的那几台设备，订阅了哪些topic
